@@ -129,6 +129,16 @@ class SlideController extends Controller
                 $slideId = $this->slideModel->create($slideData);
                     Logger::log("Successfully created slide with ID: " . $slideId);
                 
+                // Broadcast slide creation via WebSocket
+                require_once __DIR__ . '/../helpers/WebSocketNotifier.php';
+                $wsNotifier = new WebSocketNotifier();
+                $wsNotifier->notifySlideCreate(
+                    $presentationId,
+                    $slideId,
+                    $_SESSION['user_id'] ?? 0,
+                    $_SESSION['username'] ?? 'Anonymous'
+                );
+                
                 $_SESSION['success'] = 'Слайдът е създаден успешно';
                     
                     if ($isAjax) {
@@ -281,6 +291,16 @@ class SlideController extends Controller
                     'elements' => $elements
                 ]);
                 
+                // Broadcast slide update via WebSocket
+                require_once __DIR__ . '/../helpers/WebSocketNotifier.php';
+                $wsNotifier = new WebSocketNotifier();
+                $wsNotifier->notifySlideUpdate(
+                    $presentation_id,
+                    $id,
+                    $_SESSION['user_id'] ?? 0,
+                    $_SESSION['username'] ?? 'Anonymous'
+                );
+                
                 if ($isAjax) {
                     header('Content-Type: application/json');
                     echo json_encode([
@@ -340,6 +360,16 @@ class SlideController extends Controller
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($slideModel->delete($id)) {
+                // Broadcast slide deletion via WebSocket
+                require_once __DIR__ . '/../helpers/WebSocketNotifier.php';
+                $wsNotifier = new WebSocketNotifier();
+                $wsNotifier->notifySlideDelete(
+                    $slide['presentation_id'],
+                    $id,
+                    $_SESSION['user_id'] ?? 0,
+                    $_SESSION['username'] ?? 'Anonymous'
+                );
+                
                 header('Location: ' . BASE_URL . '/presentation/viewPresentation/' . $slide['presentation_id']);
             exit;
         } else {
@@ -417,6 +447,17 @@ class SlideController extends Controller
                 $success = false;
                 break;
             }
+        }
+        
+        // Broadcast slide order update via WebSocket
+        if ($success && isset($firstSlide['presentation_id'])) {
+            require_once __DIR__ . '/../helpers/WebSocketNotifier.php';
+            $wsNotifier = new WebSocketNotifier();
+            $wsNotifier->notifyPresentationUpdate(
+                $firstSlide['presentation_id'],
+                $_SESSION['user_id'] ?? 0,
+                $_SESSION['username'] ?? 'Anonymous'
+            );
         }
 
         header('Content-Type: application/json');

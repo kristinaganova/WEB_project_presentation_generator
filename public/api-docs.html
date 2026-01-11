@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentation Generator API Documentation</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.10.0/swagger-ui.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        .swagger-ui .topbar {
+            background-color: #2c3e50;
+        }
+        .swagger-ui .info .title {
+            color: #2c3e50;
+        }
+        .custom-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .custom-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 32px;
+        }
+        .custom-header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        .custom-footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #dee2e6;
+            margin-top: 40px;
+        }
+        .custom-footer a {
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .custom-footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="custom-header">
+        <h1>🚀 Presentation Generator API</h1>
+        <p>Interactive REST API documentation - Test endpoints directly from your browser</p>
+    </div>
+    
+    <div id="swagger-ui"></div>
+    
+    <div class="custom-footer">
+        <p><strong>Quick Links:</strong></p>
+        <a href="/">Home</a> | 
+        <a href="/dashboard">Dashboard</a> | 
+        <a href="/swagger.json" target="_blank">OpenAPI Spec (JSON)</a> | 
+        <a href="/api/health" target="_blank">API Health Check</a>
+        <p style="margin-top: 10px; color: #6c757d;">
+            <small>Presentation Generator v1.0.0 | Developed for Distributed Systems Course</small>
+        </p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.10.0/swagger-ui-bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.10.0/swagger-ui-standalone-preset.js"></script>
+    <script>
+        window.onload = function() {
+            const ui = SwaggerUIBundle({
+                url: '/swagger.json',
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIStandalonePreset
+                ],
+                plugins: [
+                    SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                layout: "StandaloneLayout",
+                defaultModelsExpandDepth: 1,
+                defaultModelExpandDepth: 1,
+                docExpansion: 'list',
+                filter: true,
+                showExtensions: true,
+                showCommonExtensions: true,
+                tryItOutEnabled: true,
+                requestInterceptor: (request) => {
+                    // Auto-add PHPSESSID cookie if available
+                    const cookies = document.cookie.split(';');
+                    const phpsessid = cookies.find(c => c.trim().startsWith('PHPSESSID='));
+                    
+                    if (phpsessid && !request.headers.Authorization) {
+                        const sessionId = phpsessid.split('=')[1];
+                        request.headers.Authorization = `Bearer ${sessionId}`;
+                    }
+                    
+                    return request;
+                },
+                onComplete: () => {
+                    console.log('Swagger UI loaded successfully');
+                    
+                    // Show helpful message about authentication
+                    const info = document.querySelector('.information-container');
+                    if (info) {
+                        const authNotice = document.createElement('div');
+                        authNotice.style.cssText = 'background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 15px; margin: 20px 0;';
+                        authNotice.innerHTML = `
+                            <h4 style="margin: 0 0 10px 0; color: #856404;">🔐 Authentication Guide</h4>
+                            <p style="margin: 0 0 10px 0; color: #856404;">
+                                To test authenticated endpoints:
+                            </p>
+                            <ol style="margin: 0; padding-left: 20px; color: #856404;">
+                                <li>Login to the application in another tab</li>
+                                <li>Copy your <strong>PHPSESSID</strong> cookie value (from browser DevTools → Application → Cookies)</li>
+                                <li>Click "Authorize" button above</li>
+                                <li>Paste the session ID in the "Value" field</li>
+                                <li>Click "Authorize" and "Close"</li>
+                            </ol>
+                            <p style="margin: 10px 0 0 0; color: #856404;">
+                                <strong>Note:</strong> This API uses session-based authentication with Bearer token format for compatibility.
+                            </p>
+                        `;
+                        info.parentNode.insertBefore(authNotice, info.nextSibling);
+                    }
+                }
+            });
+
+            window.ui = ui;
+        };
+    </script>
+</body>
+</html>

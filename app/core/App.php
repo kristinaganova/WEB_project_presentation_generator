@@ -17,6 +17,34 @@ class App
         Logger::log("App::__construct - SCRIPT_NAME: " . $_SERVER['SCRIPT_NAME']);
         Logger::log("App::__construct - PHP_SELF: " . $_SERVER['PHP_SELF']);
 
+        // Handle API routes
+        if (isset($url[0]) && $url[0] === 'api') {
+            array_shift($url);
+            $this->controller = 'ApiController';
+            
+            // Map API routes to controller methods
+            // /api/presentations/{id} -> ApiController->presentation($id)
+            // /api/slides/{id} -> ApiController->slide($id)
+            // /api/workspaces -> ApiController->workspaces()
+            // /api/health -> ApiController->health()
+            
+            if (isset($url[0])) {
+                $this->method = $url[0]; // presentations, slides, workspaces, health
+                unset($url[0]);
+                
+                if (isset($url[1])) {
+                    $this->params = [$url[1]]; // id parameter
+                }
+            }
+            
+            Logger::log("App::__construct - API route detected: controller={$this->controller}, method={$this->method}, params=" . print_r($this->params, true));
+            
+            require_once "../app/controllers/{$this->controller}.php";
+            $this->controller = new $this->controller;
+            call_user_func_array([$this->controller, $this->method], $this->params);
+            return;
+        }
+
         if (isset($url[0])) {
             $controllerName = rtrim($url[0], 's');
             if (file_exists("../app/controllers/" . ucfirst($controllerName) . "Controller.php")) {

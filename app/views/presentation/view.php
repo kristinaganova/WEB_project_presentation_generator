@@ -6,6 +6,7 @@ require_once __DIR__ . '/../../helpers/SlideRenderer.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/main.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/presentation.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/slides.css">
@@ -22,6 +23,9 @@ require_once __DIR__ . '/../../helpers/SlideRenderer.php';
                     <span><i class="fas fa-palette"></i> Тема: <?= htmlspecialchars($data['presentation']['theme']) ?></span>
                 </div>
                 <div class="presentation-actions">
+                    <a href="<?= BASE_URL ?>/presentation/exportPdfViaService/<?= $data['presentation']['id'] ?>" class="btn btn-success" title="Експорт като PDF чрез Node.js микросервиз">
+                        <i class="fas fa-file-pdf"></i> Експорт PDF
+                    </a>
                     <div class="dropdown">
                         <button class="btn btn-primary dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                             Експорт
@@ -34,9 +38,34 @@ require_once __DIR__ . '/../../helpers/SlideRenderer.php';
                 </div>
             </div>
 
+            <?php if (isset($_SESSION['error'])): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars($_SESSION['error']) ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <?php unset($_SESSION['error']); ?>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['success'])): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle"></i> <?= htmlspecialchars($_SESSION['success']) ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <?php unset($_SESSION['success']); ?>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['warning'])): ?>
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i> <?= htmlspecialchars($_SESSION['warning']) ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <?php unset($_SESSION['warning']); ?>
+            <?php endif; ?>
+
             <?php if (isset($_GET['error'])): ?>
-                <div class="error-message">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars($_GET['error']) ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             <?php endif; ?>
 
@@ -248,6 +277,70 @@ require_once __DIR__ . '/../../helpers/SlideRenderer.php';
                 console.error('Error:', error);
                 alert('Възникна грешка при експорт на презентацията');
             });
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- WebSocket Real-time Collaboration -->
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/websocket.css">
+    <script src="<?= BASE_URL ?>/assets/js/websocket-client.js"></script>
+    <script>
+        // Initialize WebSocket for real-time collaboration
+        const presentationId = <?= $data['presentation']['id'] ?>;
+        const userId = <?= isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'null' ?>;
+        const username = '<?= isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Anonymous' ?>';
+        
+        if (presentationId && userId) {
+            const wsClient = new PresentationWebSocket(presentationId, {
+                userId: userId,
+                username: username,
+                debug: true
+            });
+            
+            // Reload page when slides are updated by other users
+            wsClient.onSlideUpdated = (data) => {
+                console.log('[App] Slide updated by:', data.username, 'User ID:', data.userId, 'My ID:', userId);
+                console.log('[App] Will reload?', data.userId != userId);
+                // Only reload if it's a different user
+                if (data.userId != userId) {
+                    setTimeout(() => {
+                        console.log('[App] Reloading page to show updates...');
+                        location.reload();
+                    }, 1500);
+                }
+            };
+            
+            // Reload when slides are created
+            wsClient.onSlideCreated = (data) => {
+                console.log('[App] Slide created by:', data.username);
+                if (data.userId != userId) {
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                }
+            };
+            
+            // Reload when slides are deleted
+            wsClient.onSlideDeleted = (data) => {
+                console.log('[App] Slide deleted by:', data.username);
+                if (data.userId != userId) {
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                }
+            };
+            
+            // Reload when presentation is updated (e.g., slide order changed)
+            wsClient.onPresentationUpdated = (data) => {
+                console.log('[App] Presentation updated by:', data.username, 'User ID:', data.userId, 'My ID:', userId);
+                console.log('[App] Will reload?', data.userId != userId);
+                if (data.userId != userId) {
+                    setTimeout(() => {
+                        console.log('[App] Reloading page to show slide order...');
+                        location.reload();
+                    }, 1500);
+                }
+            };
         }
     </script>
 </body>

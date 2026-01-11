@@ -6,6 +6,11 @@ RewriteRule ^$ /WEB_project_presentation_generator/public/auth/login [L]
 # Allow direct access to assets directory
 RewriteRule ^assets/ - [L]
 
+# Handle API routes with proper HTTP method support
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^api/(.*)$ index.php?url=api/$1 [QSA,L]
+
 # Handle all other requests through index.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

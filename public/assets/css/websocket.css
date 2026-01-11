@@ -1,0 +1,260 @@
+/* WebSocket Real-time Collaboration Styles */
+
+/* Status Indicator */
+.ws-status-indicator {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border-radius: 20px;
+    padding: 8px 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 9999;
+    font-size: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    transition: all 0.3s ease;
+}
+
+.ws-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ccc;
+    animation: pulse 2s infinite;
+}
+
+.ws-status-indicator.ws-connected .ws-status-dot {
+    background: #10b981;
+}
+
+.ws-status-indicator.ws-connecting .ws-status-dot {
+    background: #f59e0b;
+}
+
+.ws-status-indicator.ws-disconnected .ws-status-dot {
+    background: #6b7280;
+    animation: none;
+}
+
+.ws-status-indicator.ws-error .ws-status-dot {
+    background: #ef4444;
+}
+
+.ws-status-text {
+    color: #374151;
+    font-weight: 500;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(1.2);
+    }
+}
+
+/* Notification Container */
+.ws-notification-container {
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    z-index: 9998;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 350px;
+}
+
+/* Individual Notification */
+.ws-notification {
+    background: white;
+    border-radius: 8px;
+    padding: 12px 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    transform: translateX(400px);
+    transition: all 0.3s ease;
+}
+
+.ws-notification.ws-notification-show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.ws-notification-icon {
+    font-size: 18px;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.ws-notification-message {
+    flex: 1;
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.4;
+}
+
+/* Notification Types */
+.ws-notification-success {
+    border-left: 4px solid #10b981;
+}
+
+.ws-notification-success .ws-notification-icon {
+    color: #10b981;
+}
+
+.ws-notification-error {
+    border-left: 4px solid #ef4444;
+}
+
+.ws-notification-error .ws-notification-icon {
+    color: #ef4444;
+}
+
+.ws-notification-warning {
+    border-left: 4px solid #f59e0b;
+}
+
+.ws-notification-warning .ws-notification-icon {
+    color: #f59e0b;
+}
+
+.ws-notification-info {
+    border-left: 4px solid #3b82f6;
+}
+
+.ws-notification-info .ws-notification-icon {
+    color: #3b82f6;
+}
+
+/* Remote Update Highlight */
+.ws-updated-remotely {
+    animation: highlightUpdate 2s ease;
+    position: relative;
+}
+
+@keyframes highlightUpdate {
+    0% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+    }
+}
+
+/* Slide with remote update indicator */
+.ws-updated-remotely::after {
+    content: "Updated by another user";
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #3b82f6;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    animation: fadeInOut 2s ease;
+}
+
+@keyframes fadeInOut {
+    0%, 100% {
+        opacity: 0;
+    }
+    10%, 90% {
+        opacity: 1;
+    }
+}
+
+/* Active Users Indicator (optional) */
+.ws-active-users {
+    position: fixed;
+    top: 20px;
+    right: 200px;
+    background: white;
+    border-radius: 20px;
+    padding: 8px 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 9999;
+    font-size: 14px;
+}
+
+.ws-active-users-icon {
+    color: #3b82f6;
+}
+
+.ws-active-users-count {
+    font-weight: 600;
+    color: #374151;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .ws-status-indicator {
+        top: 10px;
+        right: 10px;
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    
+    .ws-notification-container {
+        top: 60px;
+        right: 10px;
+        max-width: calc(100vw - 20px);
+    }
+    
+    .ws-notification {
+        padding: 10px 12px;
+    }
+    
+    .ws-notification-message {
+        font-size: 13px;
+    }
+    
+    .ws-active-users {
+        display: none;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .ws-status-indicator,
+    .ws-notification {
+        background: #1f2937;
+        color: #f3f4f6;
+    }
+    
+    .ws-status-text,
+    .ws-notification-message {
+        color: #f3f4f6;
+    }
+}
+
+/* Loading Animation */
+.ws-connecting .ws-status-dot {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}

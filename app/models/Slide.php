@@ -193,52 +193,27 @@ class Slide extends Model
     }
 
     public function getById($id)
-    {
-        $sql = "SELECT s.*, 
-                    GROUP_CONCAT(se.id ORDER BY se.element_order) as element_ids,
-                    GROUP_CONCAT(se.type ORDER BY se.element_order) as element_types,
-                    GROUP_CONCAT(se.title ORDER BY se.element_order) as element_titles,
-                    GROUP_CONCAT(se.content ORDER BY se.element_order) as element_contents,
-                    GROUP_CONCAT(se.text ORDER BY se.element_order) as element_texts,
-                    GROUP_CONCAT(se.style ORDER BY se.element_order) as element_styles
-             FROM slides s
-             LEFT JOIN slide_elements se ON s.id = se.slide_id
-         WHERE s.id = :id
-         GROUP BY s.id";
-        
+{
+    $sql = "SELECT * FROM slides WHERE id = :id";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute(['id' => $id]);
+    $slide = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($slide) {
+        $sql = "SELECT * FROM slide_elements WHERE slide_id = :slide_id ORDER BY element_order ASC";
         $stmt = $this->db->prepare($sql);
-        $stmt->execute(['id' => $id]);
-        
-        $slide = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        if ($slide) {
-            $slide['elements'] = [];
-            if (!empty($slide['element_ids'])) {
-                $ids = explode(',', $slide['element_ids'] ?? '');
-                $types = explode(',', $slide['element_types'] ?? '');
-                $titles = explode(',', $slide['element_titles'] ?? '');
-                $contents = explode(',', $slide['element_contents'] ?? '');
-                $texts = explode(',', $slide['element_texts'] ?? '');
-                $styles = explode(',', $slide['element_styles'] ?? '');
-                
-                for ($i = 0; $i < count($ids); $i++) {
-                    $slide['elements'][] = [
-                        'id' => $ids[$i] ?? null,
-                        'type' => $types[$i] ?? null,
-                        'title' => $titles[$i] ?? null,
-                        'content' => $contents[$i] ?? null,
-                        'text' => $texts[$i] ?? null,
-                        'style' => json_decode($styles[$i] ?? '{}', true)
-                    ];
-                }
-            }
-            
-            unset($slide['element_ids'], $slide['element_types'], $slide['element_titles'], 
-                  $slide['element_contents'], $slide['element_texts'], $slide['element_styles']);
+        $stmt->execute(['slide_id' => $id]);
+        $elements = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($elements as &$element) {
+            $element['style'] = json_decode($element['style'] ?? '{}', true);
         }
-        
-        return $slide;
+
+        $slide['elements'] = $elements;
     }
+
+    return $slide;
+}
 
     public function update($id, $data)
     {

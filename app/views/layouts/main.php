@@ -19,8 +19,12 @@
     <?php if (strpos($_SERVER['REQUEST_URI'], '/slide') !== false): ?>
         <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/slides.css">
     <?php endif; ?>
+    <!-- WebSocket Real-time Collaboration -->
+    <?php if (strpos($_SERVER['REQUEST_URI'], '/presentation/view/') !== false): ?>
+        <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/websocket.css">
+    <?php endif; ?>
 </head>
-<body>
+<body <?php if (isset($_SESSION['user_id'])): ?>data-user-id="<?php echo htmlspecialchars($_SESSION['user_id']); ?>" data-username="<?php echo htmlspecialchars($_SESSION['username'] ?? 'User'); ?>"<?php endif; ?>>
     <?php 
     $currentUrl = $_SERVER['REQUEST_URI'];
     $isAuthPage = strpos($currentUrl, '/auth/login') !== false || strpos($currentUrl, '/auth/register') !== false;
@@ -44,5 +48,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<?php echo BASE_URL; ?>/assets/js/main.js"></script>
+    <!-- WebSocket Real-time Collaboration -->
+    <?php if (strpos($_SERVER['REQUEST_URI'], '/presentation/view/') !== false): ?>
+        <script src="<?php echo BASE_URL; ?>/assets/js/websocket-client.js"></script>
+    <?php endif; ?>
 </body>
 </html> 
