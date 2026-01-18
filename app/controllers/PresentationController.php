@@ -387,7 +387,11 @@ class PresentationController extends Controller
             // Check if service is available
             if (!$pdfClient->isAvailable()) {
                 error_log('PDF Service unavailable');
-                $_SESSION['error'] = 'PDF сървизът не е достъпен! Моля, уверете се че Node.js PDF микросървизът е стартиран на порт 3001.';
+                if (defined('PDF_SERVICE_TYPE') && PDF_SERVICE_TYPE === 'rabbitmq') {
+                    $_SESSION['error'] = 'PDF сървизът не е достъпен (RabbitMQ). Моля, уверете се че RabbitMQ работи на порт 5672 и че pdf-service worker-ът е стартиран и слуша queue "' . (defined('PDF_RPC_QUEUE') ? PDF_RPC_QUEUE : 'pdf.generate') . '".';
+                } else {
+                    $_SESSION['error'] = 'PDF сървизът не е достъпен! Моля, уверете се че Node.js PDF микросървизът е стартиран на порт 3001.';
+                }
                 header('Location: ' . BASE_URL . '/presentation/viewPresentation/' . $id);
                 exit;
             }
@@ -729,10 +733,7 @@ class PresentationController extends Controller
                 // Handle image - check if it's a URL or base64
                 $imageSrc = $content;
                 if (!empty($imageSrc)) {
-                    // If it's a relative path, convert to absolute
-                    if (!preg_match('#^(https?://|data:)#i', $imageSrc)) {
-                        $imageSrc = BASE_URL . '/' . ltrim($imageSrc, '/');
-                    }
+                    $imageSrc = $this->resolveImageForPdf($imageSrc);
                     $alt = $element['alt'] ?? $title ?? 'Image';
                     $html .= '<div style="display: flex; align-items: center; justify-content: center; margin: 30px 0;">';
                     $html .= '<img src="' . htmlspecialchars($imageSrc) . '" alt="' . htmlspecialchars($alt) . '" style="max-width: 70%; max-height: 45vh; width: auto; height: auto; object-fit: contain;">';
@@ -744,9 +745,7 @@ class PresentationController extends Controller
                 // Image with text
                 $imageSrc = $content;
                 if (!empty($imageSrc)) {
-                    if (!preg_match('#^(https?://|data:)#i', $imageSrc)) {
-                        $imageSrc = BASE_URL . '/' . ltrim($imageSrc, '/');
-                    }
+                    $imageSrc = $this->resolveImageForPdf($imageSrc);
                     $html .= '<div class="image-text-content">';
                     $html .= '<img src="' . htmlspecialchars($imageSrc) . '" alt="Image" style="max-width: 60%; height: auto; float: left; margin-right: 20px;">';
                     if (!empty($text)) {
@@ -767,6 +766,75 @@ class PresentationController extends Controller
         }
         
         return $html;
+    }
+
+    /**
+     * Resolve image sources for PDF generation.
+     *
+     * The PHP built-in server is single-threaded; if Puppeteer tries to load images
+     * from the same PHP server while the export request is in progress, it can deadlock
+     * and time out. To avoid this, we embed local assets as data: URIs.
+     */
+    private function resolveImageForPdf($src)
+    {
+        if (empty($src)) return $src;
+
+        // Already embedded or remote
+        if (preg_match('#^(data:|https?://)#i', $src)) {
+            return $src;
+        }
+
+        // Normalize BASE_URL absolute to a path
+        if (defined('BASE_URL') && strpos($src, BASE_URL) === 0) {
+            $src = substr($src, strlen(BASE_URL));
+            if ($src === false) $src = '';
+        }
+
+        // Map URL path to local file under public/
+        $path = $src;
+        if ($path !== '' && $path[0] !== '/') {
+            $path = '/' . $path;
+        }
+
+        $publicDir = realpath(__DIR__ . '/../../public');
+        if ($publicDir === false) {
+            // Fallback to absolute URL (might work on Apache/nginx)
+            return defined('BASE_URL') ? (BASE_URL . '/' . ltrim($src, '/')) : $src;
+        }
+
+        $candidate = realpath($publicDir . $path);
+        if ($candidate === false || strpos($candidate, $publicDir) !== 0) {
+            // Not a local file; fallback to absolute URL
+            return defined('BASE_URL') ? (BASE_URL . '/' . ltrim($src, '/')) : $src;
+        }
+
+        $bytes = @file_get_contents($candidate);
+        if ($bytes === false) {
+            return defined('BASE_URL') ? (BASE_URL . '/' . ltrim($src, '/')) : $src;
+        }
+
+        $ext = strtolower(pathinfo($candidate, PATHINFO_EXTENSION));
+        $mime = 'application/octet-stream';
+        switch ($ext) {
+            case 'svg':
+                $mime = 'image/svg+xml';
+                break;
+            case 'png':
+                $mime = 'image/png';
+                break;
+            case 'jpg':
+            case 'jpeg':
+                $mime = 'image/jpeg';
+                break;
+            case 'gif':
+                $mime = 'image/gif';
+                break;
+            case 'webp':
+                $mime = 'image/webp';
+                break;
+        }
+
+        return 'data:' . $mime . ';base64,' . base64_encode($bytes);
     }
 
     private function exportHTML($presentation, $slides)

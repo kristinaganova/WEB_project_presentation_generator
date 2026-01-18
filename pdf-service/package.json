@@ -19,6 +19,7 @@
   "author": "Presentation Generator Team",
   "license": "MIT",
   "dependencies": {
+    "amqplib": "^0.10.3",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "puppeteer": "^24.34.0"

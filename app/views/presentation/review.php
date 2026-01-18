@@ -212,6 +212,7 @@
             }
             .content-element h3 {
                 font-size: 1.8rem;
+                color: #3A8EE4;
             }
             .content-element p,
             .content-element.type-list ul {
@@ -578,7 +579,7 @@
                                     }
                                 ?>>
                                     <?php if (!empty($element['title'])): ?>
-                                        <h3><?= htmlspecialchars($element['title']) ?></h3>
+                                        <h3 class="element-title"><?= htmlspecialchars($element['title']) ?></h3>
                                     <?php endif; ?>
                                     
                                     <?php if ($element['type'] === 'text'): ?>

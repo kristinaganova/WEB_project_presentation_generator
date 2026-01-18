@@ -7,7 +7,9 @@ Node.js microservice for generating PDF files from HTML presentations using Pupp
 This microservice is part of a distributed system architecture where:
 - **PHP Backend** handles business logic and data management
 - **Node.js Microservice** (this) handles PDF generation
-- Communication via **REST API** (inter-service communication)
+- Communication via:
+  - **REST API** (HTTP/JSON)
+  - **RabbitMQ RPC** (AMQP request/response)
 
 **Points:** 20 (Критерий 2: Different platforms) + 15 (Критерий 3: Multiple paradigms) = **35 points**
 
@@ -29,6 +31,7 @@ This will install:
 - **express** - Web framework
 - **puppeteer** - Headless Chrome for PDF generation
 - **cors** - Cross-origin resource sharing
+- **amqplib** - RabbitMQ client (AMQP)
 
 ---
 
@@ -51,6 +54,8 @@ NODE_ENV=production npm start
 
 The service will start on **port 3001** (configurable via PORT env variable).
 
+It will also try to start a RabbitMQ worker (if RabbitMQ is available) listening on queue `pdf.generate`.
+
 ---
 
 ## 📡 API Endpoints
@@ -69,6 +74,19 @@ GET /health
   "timestamp": "2025-12-31T12:00:00.000Z",
   "uptime": 123.45
 }
+```
+
+---
+
+## 🐇 RabbitMQ RPC (AMQP)
+
+### Environment variables
+- `RABBITMQ_URL` (default: `amqp://guest:guest@127.0.0.1:5672/`)
+- `PDF_RPC_QUEUE` (default: `pdf.generate`)
+
+### Start RabbitMQ (Docker)
+```bash
+docker run -d --name presentation-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
 ```
 
 ---

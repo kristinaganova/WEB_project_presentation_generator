@@ -1,9 +1,13 @@
 const express = require("express");
 const puppeteer = require("puppeteer");
 const cors = require("cors");
+const amqplib = require("amqplib");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const PDF_RPC_QUEUE = process.env.PDF_RPC_QUEUE || "pdf.generate";
+const RABBITMQ_URL =
+  process.env.RABBITMQ_URL || "amqp://guest:guest@127.0.0.1:5672/";
 
 // Middleware
 app.use(cors());
@@ -24,48 +28,40 @@ app.get("/health", (req, res) => {
     version: "1.0.0",
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
+    rabbitmq: {
+      url: RABBITMQ_URL.replace(/\/\/.*@/, "//***:***@"),
+      queue: PDF_RPC_QUEUE,
+    },
   });
 });
 
-// Generate PDF endpoint
-app.post("/generate-pdf", async (req, res) => {
+async function generatePdfBase64({ html, title, options }) {
   const startTime = Date.now();
-  console.log("[PDF Generation] Request received");
+
+  if (!html) {
+    const err = new Error("HTML content is required");
+    err.code = "VALIDATION_ERROR";
+    throw err;
+  }
+
+  // Launch headless browser
+  const browser = await puppeteer.launch({
+    headless: "new",
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-accelerated-2d-canvas",
+      "--no-first-run",
+      "--no-zygote",
+      "--disable-gpu",
+    ],
+    executablePath: puppeteer.executablePath(),
+    ignoreDefaultArgs: ["--disable-extensions"],
+  });
 
   try {
-    const { html, title, options } = req.body;
-
-    // Validation
-    if (!html) {
-      console.error("[PDF Generation] Missing HTML content");
-      return res.status(400).json({
-        success: false,
-        error: "HTML content is required",
-      });
-    }
-
-    console.log(`[PDF Generation] Processing: ${title || "untitled"}`);
-    console.log(`[PDF Generation] HTML size: ${html.length} characters`);
-
-    // Launch headless browser
-    console.log("[PDF Generation] Launching browser...");
-    const browser = await puppeteer.launch({
-      headless: "new",
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-accelerated-2d-canvas",
-        "--no-first-run",
-        "--no-zygote",
-        "--disable-gpu",
-      ],
-      executablePath: puppeteer.executablePath(),
-      ignoreDefaultArgs: ["--disable-extensions"],
-    });
-
     const page = await browser.newPage();
-    console.log("[PDF Generation] Browser launched");
 
     // Set viewport for presentation size
     await page.setViewport({
@@ -75,14 +71,13 @@ app.post("/generate-pdf", async (req, res) => {
     });
 
     // Set HTML content
-    console.log("[PDF Generation] Setting HTML content...");
     await page.setContent(html, {
-      waitUntil: "networkidle0",
-      timeout: 30000,
+      // With embedded assets, we don't need networkidle0 (avoids hangs on external resources).
+      waitUntil: "domcontentloaded",
+      timeout: 60000,
     });
 
     // Generate PDF
-    console.log("[PDF Generation] Generating PDF...");
     const pdfOptions = {
       format: options?.format || "A4",
       landscape: options?.landscape !== undefined ? options.landscape : true,
@@ -97,36 +92,102 @@ app.post("/generate-pdf", async (req, res) => {
     };
 
     const pdf = await page.pdf(pdfOptions);
-
-    await browser.close();
-    console.log("[PDF Generation] Browser closed");
-
-    // Convert Buffer to base64 (PDF is already a Buffer from Puppeteer)
-    const pdfBase64 = Buffer.from(pdf).toString("base64");
-    const pdfSize = pdf.length / 1024; // Size in KB
     const duration = Date.now() - startTime;
 
-    console.log(
-      `[PDF Generation] Success! Size: ${pdfSize.toFixed(
-        2
-      )} KB, Duration: ${duration}ms`
-    );
-
-    res.json({
+    return {
       success: true,
-      pdf: pdfBase64,
+      pdf: Buffer.from(pdf).toString("base64"),
       filename: `${title || "presentation"}.pdf`,
       metadata: {
-        size: Math.round(pdfSize),
+        size: Math.round(pdf.length / 1024),
         sizeUnit: "KB",
         pages: "auto",
         generationTime: duration,
         generationTimeUnit: "ms",
       },
-    });
+    };
+  } finally {
+    await browser.close();
+  }
+}
+
+async function startRabbitMqWorker() {
+  console.log(
+    `[RabbitMQ] Connecting: ${RABBITMQ_URL.replace(/\/\/.*@/, "//***:***@")}`
+  );
+
+  const conn = await amqplib.connect(RABBITMQ_URL);
+  const channel = await conn.createChannel();
+
+  await channel.assertQueue(PDF_RPC_QUEUE, { durable: true });
+  await channel.prefetch(1);
+
+  console.log(`[RabbitMQ] Worker listening on queue: ${PDF_RPC_QUEUE}`);
+
+  channel.consume(PDF_RPC_QUEUE, async (msg) => {
+    if (!msg) return;
+
+    const correlationId = msg.properties.correlationId;
+    const replyTo = msg.properties.replyTo;
+
+    let reply = null;
+
+    try {
+      const body = msg.content.toString("utf-8");
+      const data = JSON.parse(body);
+
+      console.log(
+        `[RabbitMQ] Job received (corrId=${correlationId || "n/a"}) title="${
+          data?.title || "untitled"
+        }" htmlSize=${data?.html?.length || 0}`
+      );
+
+      reply = await generatePdfBase64({
+        html: data.html,
+        title: data.title,
+        options: data.options,
+      });
+    } catch (err) {
+      console.error("[RabbitMQ] Job error:", err?.message || err);
+      reply = {
+        success: false,
+        error: "PDF generation failed",
+        message: err?.message || String(err),
+      };
+    }
+
+    try {
+      if (replyTo) {
+        channel.sendToQueue(replyTo, Buffer.from(JSON.stringify(reply)), {
+          correlationId,
+          contentType: "application/json",
+        });
+      } else {
+        console.warn("[RabbitMQ] No replyTo set; dropping reply");
+      }
+    } finally {
+      channel.ack(msg);
+    }
+  });
+
+  conn.on("error", (e) => console.error("[RabbitMQ] connection error", e));
+  conn.on("close", () => console.error("[RabbitMQ] connection closed"));
+}
+
+// Generate PDF endpoint
+app.post("/generate-pdf", async (req, res) => {
+  console.log("[PDF Generation] Request received");
+
+  try {
+    const { html, title, options } = req.body;
+
+    console.log(`[PDF Generation] Processing: ${title || "untitled"}`);
+    console.log(`[PDF Generation] HTML size: ${html?.length || 0} characters`);
+
+    const result = await generatePdfBase64({ html, title, options });
+    res.json(result);
   } catch (error) {
-    const duration = Date.now() - startTime;
-    console.error(`[PDF Generation] Error after ${duration}ms:`, error.message);
+    console.error(`[PDF Generation] Error:`, error.message);
     console.error("[PDF Generation] Stack:", error.stack);
 
     res.status(500).json({
@@ -254,6 +315,13 @@ app.listen(PORT, () => {
   console.log(`   POST /generate-pdf-batch - Generate multiple PDFs`);
   console.log(`   GET  /health - Service health check`);
   console.log("═══════════════════════════════════════════════════════");
+  console.log(`   RabbitMQ RPC queue: ${PDF_RPC_QUEUE}`);
+  console.log("═══════════════════════════════════════════════════════");
+});
+
+// Start RabbitMQ worker (non-fatal if RabbitMQ is down, but PDF via queue won't work)
+startRabbitMqWorker().catch((err) => {
+  console.error("[RabbitMQ] Failed to start worker:", err?.message || err);
 });
 
 // Graceful shutdown

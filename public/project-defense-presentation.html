@@ -1,0 +1,766 @@
+<!doctype html>
+<html lang="bg">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Presentation Generator — проект (защита)</title>
+
+    <!-- Reuse existing project styles (no external CDNs) -->
+    <link rel="stylesheet" href="/assets/css/main.css" />
+    <link rel="stylesheet" href="/assets/css/presentation.css" />
+    <link rel="stylesheet" href="/assets/css/slides.css" />
+    <link rel="stylesheet" href="/assets/css/slide-templates.css" />
+
+    <style>
+      /* Standalone slide deck layout (keyboard nav + print-friendly). */
+      :root {
+        --deck-bg: #0b1220;
+        --deck-fg: #e5e7eb;
+        --deck-muted: rgba(229, 231, 235, 0.75);
+        --deck-border: rgba(255, 255, 255, 0.12);
+        --deck-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+        --deck-radius: 14px;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        background: radial-gradient(1200px 700px at 20% 10%, rgba(99, 102, 241, 0.18), transparent 55%),
+          radial-gradient(1000px 600px at 90% 20%, rgba(236, 72, 153, 0.14), transparent 55%),
+          var(--deck-bg);
+        color: var(--deck-fg);
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans",
+          sans-serif;
+      }
+
+      .deck {
+        min-height: 100%;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+      }
+
+      .deck-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--deck-border);
+        background: rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(10px);
+      }
+
+      .deck-brand {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .deck-brand .title {
+        font-weight: 700;
+        letter-spacing: 0.2px;
+        line-height: 1.1;
+      }
+
+      .deck-brand .subtitle {
+        font-size: 12px;
+        color: var(--deck-muted);
+      }
+
+      .deck-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .deck-controls .hint {
+        font-size: 12px;
+        color: var(--deck-muted);
+        white-space: nowrap;
+      }
+
+      .deck-controls .btn {
+        appearance: none;
+        border: 1px solid var(--deck-border);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--deck-fg);
+        padding: 8px 10px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 13px;
+        line-height: 1;
+      }
+
+      .deck-controls .btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .deck-controls .btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+
+      .deck-controls select {
+        border: 1px solid var(--deck-border);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--deck-fg);
+        padding: 8px 10px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 13px;
+      }
+
+      .deck-stage {
+        display: grid;
+        place-items: center;
+        padding: 18px;
+      }
+
+      .deck-frame {
+        width: min(96vw, calc(96vh * 16 / 9), 1280px);
+        height: calc(min(96vw, calc(96vh * 16 / 9), 1280px) * 9 / 16);
+        border-radius: var(--deck-radius);
+        box-shadow: var(--deck-shadow);
+        overflow: hidden;
+        position: relative;
+      }
+
+      .deck-frame::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border: 1px solid var(--deck-border);
+        border-radius: var(--deck-radius);
+        pointer-events: none;
+      }
+
+      .presentation-view {
+        height: 100%;
+        width: 100%;
+        background: transparent;
+      }
+
+      .slides {
+        height: 100%;
+        width: 100%;
+      }
+
+      .deck-slide {
+        height: 100%;
+        width: 100%;
+        display: none;
+      }
+
+      .deck-slide.is-active {
+        display: block;
+      }
+
+      /* Reuse .slide + .content-element from existing CSS; tighten spacing for 16:9. */
+      .slide {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 46px 54px;
+        box-sizing: border-box;
+        border-radius: 0;
+      }
+
+      .slide-title {
+        margin: 0 0 18px 0;
+        font-size: 42px;
+        letter-spacing: -0.2px;
+      }
+
+      .slide-subtitle {
+        margin: -6px 0 18px 0;
+        color: var(--deck-muted);
+        font-size: 18px;
+      }
+
+      .content-element {
+        box-shadow: none;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+      }
+
+      .content-element p,
+      .content-element li {
+        font-size: 20px;
+      }
+
+      .content-element h3 {
+        font-size: 22px;
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 16px;
+        height: calc(100% - 78px);
+      }
+
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        height: calc(100% - 78px);
+      }
+
+      .stack {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .small {
+        font-size: 16px !important;
+      }
+
+      .kbd {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-bottom-width: 2px;
+        padding: 2px 6px;
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.2);
+        color: var(--deck-fg);
+      }
+
+      .deck-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        border-top: 1px solid var(--deck-border);
+        background: rgba(0, 0, 0, 0.18);
+        backdrop-filter: blur(10px);
+        font-size: 12px;
+        color: var(--deck-muted);
+      }
+
+      .deck-footer a {
+        color: inherit;
+      }
+
+      /* Theme integration: presentation.css expects .presentation-view[data-theme=...] */
+      .presentation-view[data-theme="light"] {
+        /* light theme fallback */
+        background: rgba(255, 255, 255, 0.85);
+      }
+
+      /* Print: show all slides one per page */
+      @media print {
+        body {
+          background: #fff !important;
+          color: #000 !important;
+        }
+        .deck-toolbar,
+        .deck-footer {
+          display: none !important;
+        }
+        .deck-stage {
+          padding: 0 !important;
+        }
+        .deck-frame {
+          width: 100% !important;
+          height: auto !important;
+          box-shadow: none !important;
+          border: none !important;
+        }
+        .deck-frame::before {
+          display: none !important;
+        }
+        .deck-slide {
+          display: block !important;
+          page-break-after: always;
+          break-after: page;
+          height: auto !important;
+        }
+        .slide {
+          height: 100vh !important;
+          width: 100vw !important;
+          border: none !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="deck">
+      <header class="deck-toolbar">
+        <div class="deck-brand">
+          <div class="title">Presentation Generator — проект</div>
+          <div class="subtitle">REST API · Node.js PDF микросервиз · WebSocket collaboration · MySQL</div>
+        </div>
+        <div class="deck-controls">
+          <span class="hint">Навигация: <span class="kbd">←</span> <span class="kbd">→</span> · <span class="kbd">Home</span> · <span class="kbd">End</span></span>
+          <button class="btn" id="prevBtn" type="button">Назад</button>
+          <button class="btn" id="nextBtn" type="button">Напред</button>
+          <label class="hint" for="themeSelect">Тема</label>
+          <select id="themeSelect">
+            <option value="dark">dark</option>
+            <option value="ken">ken</option>
+            <option value="barbie">barbie</option>
+            <option value="light">light</option>
+          </select>
+        </div>
+      </header>
+
+      <main class="deck-stage">
+        <div class="deck-frame">
+          <div class="presentation-view" id="presentationRoot" data-theme="dark">
+            <div class="slides" id="slides">
+              <!-- Slide 1 -->
+              <section class="deck-slide is-active">
+                <div class="slide">
+                  <h1 class="slide-title">Presentation Generator</h1>
+                  <p class="slide-subtitle">Разпределена система за създаване, редактиране и експортиране на презентации</p>
+                  <div class="grid-2">
+                    <div class="stack">
+                      <div class="content-element type-text">
+                        <h3>Какво решава?</h3>
+                        <p>
+                          Уеб приложение за управление на workspaces, презентации и слайдове с готови шаблони и
+                          real-time синхронизация между потребители.
+                        </p>
+                      </div>
+                      <div class="content-element type-list">
+                        <h3>Комуникационни парадигми</h3>
+                        <ul>
+                          <li>REST (HTTP/JSON) — външен достъп до ресурси</li>
+                          <li>Микросервиз (PHP ↔ Node.js) — PDF генерация</li>
+                          <li>WebSocket — collaboration в реално време</li>
+                          <li>AJAX (Fetch) — динамичен UI без презареждане</li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="stack">
+                      <div class="content-element type-list">
+                        <h3>Ключови функции</h3>
+                        <ul>
+                          <li>Workspaces + роли (owner/viewer)</li>
+                          <li>CRUD за презентации/слайдове</li>
+                          <li>Шаблони: текст, списък, цитат, 2 колони</li>
+                          <li>Експорт: HTML / XML / PDF (микросервиз)</li>
+                        </ul>
+                      </div>
+                      <div class="content-element type-text">
+                        <h3>Бързи линкове (локално)</h3>
+                        <p class="small">
+                          App: <code>http://localhost:8000</code><br />
+                          Swagger: <code>/api-docs.html</code><br />
+                          PDF service: <code>http://localhost:3001/health</code><br />
+                          WS health: <code>http://localhost:3003/health</code>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Slide 2 -->
+              <section class="deck-slide">
+                <div class="slide">
+                  <h2 class="slide-title">Архитектура (overview)</h2>
+                  <div class="grid-2">
+                    <div class="content-element type-text">
+                      <h3>Компоненти</h3>
+                      <p>
+                        Основното приложение е PHP MVC, което говори с MySQL, извиква PDF микросервиз по REST и
+                        синхронизира промени към клиенти през WebSocket.
+                      </p>
+                      <p class="small">
+                        Портове: PHP <code>8000</code> · PDF <code>3001</code> · WS <code>3002</code> · WS health <code>3003</code>
+                      </p>
+                    </div>
+                    <div class="content-element type-text">
+                      <h3>Диаграма</h3>
+                      <pre class="small" style="white-space: pre; margin: 0;">
+BROWSER (HTML/CSS/JS)
+  | REST (JSON)        | WebSocket
+  v                   v
+PHP MVC (8000) ----> WS service (3002)
+  | SQL
+  v
+MySQL (presentation_generator)
+
+PHP MVC ---- REST ----> PDF service (3001)
+                      (Puppeteer: HTML -> PDF)</pre>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Slide 3 -->
+              <section class="deck-slide">
+                <div class="slide">
+                  <h2 class="slide-title">Използвани технологии</h2>
+                  <div class="grid-3">
+                    <div class="content-element type-list">
+                      <h3>Backend (PHP)</h3>
+                      <ul>
+                        <li>PHP MVC (controllers/models/views)</li>
+                        <li>PDO (prepared statements)</li>
+                        <li>Sessions + Auth middleware</li>
+                        <li>TCPDF (алтернативен PDF път)</li>
+                      </ul>
+                    </div>
+                    <div class="content-element type-list">
+                      <h3>Node.js услуги</h3>
+                      <ul>
+                        <li>Express (PDF service)</li>
+                        <li>Puppeteer (рендериране към PDF)</li>
+                        <li>ws (WebSocket server)</li>
+                        <li>CORS + health endpoints</li>
+                      </ul>
+                    </div>
+                    <div class="content-element type-list">
+                      <h3>Frontend/Docs</h3>
+                      <ul>
+                        <li>HTML/CSS/JS + Fetch API</li>
+                        <li>Real-time client (auto reconnect)</li>
+                        <li>Swagger UI + OpenAPI 3.0</li>
+                        <li>Автоматизирани тестове</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Slide 4 -->
+              <section class="deck-slide">
+                <div class="slide">
+                  <h2 class="slide-title">REST API (примерни endpoints)</h2>
+                  <div class="grid-2">
+                    <div class="content-element type-list">
+                      <h3>Основни операции</h3>
+                      <ul>
+                        <li><code>GET /api/health</code> — health check</li>
+                        <li><code>GET /api/workspaces</code> — списък</li>
+                        <li><code>GET /api/presentations</code> — списък</li>
+                        <li><code>GET /api/presentations/{id}</code> — презентация + слайдове</li>
+                        <li><code>POST /api/presentations</code> — създаване</li>
+                        <li><code>POST /api/slides</code>, <code>PUT /api/slides/{id}</code>, <code>DELETE /api/slides/{id}</code></li>
+                      </ul>
+                    </div>
+                    <div class="content-element type-text">
+                      <h3>Аутентикация</h3>
+                      <p>
+                        UI е session-based (PHPSESSID cookie). За API се използва Bearer token със стойност
+                        <code>PHPSESSID</code> (след login).
+                      </p>
+                      <p class="small">
+                        Swagger: <code>http://localhost:8000/api-docs.html</code><br />
+                        Test console: <code>/api-test.html</code>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Slide 5 -->
+              <section class="deck-slide">
+                <div class="slide">
+                  <h2 class="slide-title">PDF микросервиз (Node.js + Puppeteer)</h2>
+                  <div class="grid-2">
+                    <div class="content-element type-text">
+                      <h3>Идея</h3>
+                      <p>
+                        PHP генерира HTML за презентацията и го изпраща към Node.js услуга по REST.
+                        Услугата рендерира HTML с headless Chrome и връща PDF (base64 → бинарно в PHP).
+                      </p>
+                    </div>
+                    <div class="content-element type-list">
+                      <h3>Endpoints</h3>
+                      <ul>
+                        <li><code>GET /health</code> — статус</li>
+                        <li><code>POST /generate-pdf</code> — единичен PDF</li>
+                        <li><code>POST /generate-pdf-batch</code> — batch</li>
+                      </ul>
+                      <p class="small">
+                        Health: <code>http://localhost:3001/health</code>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Slide 6 -->
+              <section class="deck-slide">
+                <div class="slide">
+                  <h2 class="slide-title">WebSocket collaboration</h2>
+                  <div class="grid-2">
+                    <div class="content-element type-list">
+                      <h3>Как работи</h3>
+                      <ul>
+                        <li>Room per presentation (по ID)</li>
+                        <li>Broadcast към всички клиенти в room-а</li>
+                        <li>HTTP endpoint <code>/broadcast</code> за нотификации от PHP</li>
+                        <li>Client: auto-reconnect + status indicator</li>
+                      </ul>
+                    </div>
+                    <div class="content-element type-text">
+                      <h3>Здраве/връзка</h3>
+                      <p class="small">
+                        WebSocket URL: <code>ws://localhost:3002</code><br />
+                        Health: <code>http://localhost:3003/health</code>
+                      </p>
+                      <p class="small">
+                        Демо: отвори една и съща презентация в 2 прозореца → редактирай слайд → виж update в реално време.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Slide 7 -->
+              <section class="deck-slide">
+                <div class="slide">
+                  <h2 class="slide-title">Сигурност и качество</h2>
+                  <div class="grid-3">
+                    <div class="content-element type-list">
+                      <h3>Security</h3>
+                      <ul>
+                        <li>Passwords: <code>password_hash()</code> / <code>password_verify()</code></li>
+                        <li>Authorization: access checks по workspace</li>
+                        <li>PDO prepared statements (SQLi защита)</li>
+                        <li>XSS: <code>htmlspecialchars()</code> във view-ове</li>
+                      </ul>
+                    </div>
+                    <div class="content-element type-list">
+                      <h3>Наблюдаемост</h3>
+                      <ul>
+                        <li>Подробни server logs (PHP)</li>
+                        <li>Health endpoints за услугите</li>
+                        <li>Ясни HTTP статуси/грешки в API</li>
+                      </ul>
+                    </div>
+                    <div class="content-element type-list">
+                      <h3>Тестове</h3>
+                      <ul>
+                        <li>PDF service: basic + extended тестове</li>
+                        <li>PHP integration тестове</li>
+                        <li>Swagger “Try it out” за API проверки</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Slide 8 -->
+              <section class="deck-slide">
+                <div class="slide">
+                  <h2 class="slide-title">Резултати</h2>
+                  <div class="grid-2">
+                    <div class="stack">
+                      <div class="content-element type-list">
+                        <h3>Покрити изисквания</h3>
+                        <ul>
+                          <li>REST API (CRUD) + Swagger/OpenAPI</li>
+                          <li>Микросервиз: HTML → PDF (Node.js)</li>
+                          <li>WebSocket real-time collaboration</li>
+                          <li>Документация + тестове</li>
+                        </ul>
+                      </div>
+                      <div class="content-element type-text">
+                        <h3>Качество</h3>
+                        <p>
+                          Фокус върху error handling, логване, ясни интерфейси между услугите и възможност за
+                          лесно демо/защита.
+                        </p>
+                      </div>
+                    </div>
+                    <div class="content-element type-text">
+                      <h3>Какво демонстрираме на защита</h3>
+                      <p class="small">
+                        1) Swagger UI: изпълнение на <code>GET /api/presentations</code><br />
+                        2) PDF export: бутон “Експорт PDF” → генериран PDF (Node.js)<br />
+                        3) WebSocket: 2 прозореца → промяна → real-time update
+                      </p>
+                      <p class="small">
+                        Допълнително: health checks на трите услуги (8000/3001/3003).
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Slide 9 -->
+              <section class="deck-slide">
+                <div class="slide">
+                  <h2 class="slide-title">Кратко демо (5 мин.)</h2>
+                  <div class="grid-2">
+                    <div class="content-element type-list">
+                      <h3>Сценарий</h3>
+                      <ul>
+                        <li>Отвори <code>/auth/login</code> и влез</li>
+                        <li>Dashboard → отвори workspace</li>
+                        <li>Отвори презентация → “Преглед”</li>
+                        <li>Експорт PDF (микросервиз)</li>
+                        <li>Отвори същата презентация в 2 прозореца → редакция → real-time update</li>
+                      </ul>
+                    </div>
+                    <div class="content-element type-text">
+                      <h3>Силни talking points</h3>
+                      <p class="small">
+                        - 3 независими услуги, 3 парадигми комуникация<br />
+                        - PHP ↔ Node.js интеграция (REST) + headless Chrome<br />
+                        - WebSocket room model + broadcasting + reconnection<br />
+                        - Документация + интерактивен Swagger + тестове
+                      </p>
+                      <p class="small">
+                        Ако нещо падне: покажи <code>/api/health</code>, <code>3001/health</code>, <code>3003/health</code>.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Slide 10 -->
+              <section class="deck-slide">
+                <div class="slide">
+                  <h2 class="slide-title">Въпроси?</h2>
+                  <p class="slide-subtitle">Благодаря!</p>
+                  <div class="grid-2">
+                    <div class="content-element type-text">
+                      <h3>Какво можем да разкажем при въпроси</h3>
+                      <p class="small">
+                        - Защо точно микросервиз за PDF (изолация, независим deployment)<br />
+                        - Как се пази консистентност (транзакции при комплексни операции)<br />
+                        - Как се прави authorization (workspace membership + роли)<br />
+                        - Как се тестват услугите (скриптове + интеграционни тестове)
+                      </p>
+                    </div>
+                    <div class="content-element type-text">
+                      <h3>Полезни страници</h3>
+                      <p class="small">
+                        - Swagger: <code>/api-docs.html</code><br />
+                        - API Test: <code>/api-test.html</code><br />
+                        - PDF: <code>http://localhost:3001/health</code><br />
+                        - WS: <code>http://localhost:3003/health</code>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer class="deck-footer">
+        <div>
+          Слайд <span id="slideIndex">1</span>/<span id="slideCount">1</span>
+          · URL hash <code>#<span id="hashValue">1</span></code>
+        </div>
+        <div>
+          Съвет: за PDF можеш да “Print…” или да използваш PDF microservice.
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      (function () {
+        const slides = Array.from(document.querySelectorAll(".deck-slide"));
+        const slideCountEl = document.getElementById("slideCount");
+        const slideIndexEl = document.getElementById("slideIndex");
+        const hashEl = document.getElementById("hashValue");
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+        const themeSelect = document.getElementById("themeSelect");
+        const root = document.getElementById("presentationRoot");
+
+        slideCountEl.textContent = String(slides.length);
+
+        function clamp(n, min, max) {
+          return Math.max(min, Math.min(max, n));
+        }
+
+        function getInitialIndex() {
+          const fromHash = Number(String(location.hash || "").replace("#", ""));
+          if (Number.isFinite(fromHash) && fromHash >= 1 && fromHash <= slides.length) return fromHash - 1;
+          return 0;
+        }
+
+        let index = getInitialIndex();
+
+        function render() {
+          slides.forEach((s, i) => s.classList.toggle("is-active", i === index));
+          slideIndexEl.textContent = String(index + 1);
+          hashEl.textContent = String(index + 1);
+          prevBtn.disabled = index === 0;
+          nextBtn.disabled = index === slides.length - 1;
+          history.replaceState(null, "", `#${index + 1}`);
+        }
+
+        function go(delta) {
+          index = clamp(index + delta, 0, slides.length - 1);
+          render();
+        }
+
+        function setTheme(theme) {
+          root.setAttribute("data-theme", theme);
+          try {
+            const url = new URL(location.href);
+            url.searchParams.set("theme", theme);
+            history.replaceState(null, "", url.toString());
+          } catch (_) {
+            // ignore
+          }
+        }
+
+        // Init theme from query param
+        try {
+          const url = new URL(location.href);
+          const theme = url.searchParams.get("theme");
+          if (theme) {
+            themeSelect.value = theme;
+            setTheme(theme);
+          }
+        } catch (_) {
+          // ignore
+        }
+
+        prevBtn.addEventListener("click", () => go(-1));
+        nextBtn.addEventListener("click", () => go(1));
+
+        themeSelect.addEventListener("change", (e) => setTheme(e.target.value));
+
+        window.addEventListener("hashchange", () => {
+          const newIndex = getInitialIndex();
+          index = newIndex;
+          render();
+        });
+
+        window.addEventListener("keydown", (e) => {
+          if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") {
+            e.preventDefault();
+            go(1);
+          } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+            e.preventDefault();
+            go(-1);
+          } else if (e.key === "Home") {
+            e.preventDefault();
+            index = 0;
+            render();
+          } else if (e.key === "End") {
+            e.preventDefault();
+            index = slides.length - 1;
+            render();
+          }
+        });
+
+        render();
+      })();
+    </script>
+  </body>
+</html>
+

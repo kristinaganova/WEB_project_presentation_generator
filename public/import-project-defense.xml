@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<presentation title="Презентационен генератор — защита" language="bg" theme="light">
+
+  <slide title="Презентационен генератор" slide_order="1" layout="full">
+    <slide_element element_order="0" type="text" title="" content="Разпределена уеб система за създаване, редактиране и експортиране на презентации" text="" style="{&quot;fontSize&quot;:&quot;38px&quot;,&quot;textAlign&quot;:&quot;center&quot;}"/>
+    <slide_element element_order="1" type="text" title="" content="Проект по Проектиране и интегриране на софтуерни системи" text="" style="{&quot;fontSize&quot;:&quot;18px&quot;,&quot;textAlign&quot;:&quot;center&quot;,&quot;color&quot;:&quot;#888&quot;}"/>
+  </slide>
+
+  <slide title="Какъв проблем решава?" slide_order="2" layout="full">
+    <slide_element element_order="0" type="list" title="" content="Централизирано управление на презентации&#10;Едновременна работа на няколко потребителя&#10;Експорт в различни формати&#10;Real-time синхронизация между клиенти" text="" style="[]"/>
+  </slide>
+
+  <slide title="Какво представлява системата?" slide_order="3" layout="full">
+    <slide_element element_order="0" type="text" title="Описание" content="Уеб приложение с концепция workspaces → presentations → slides, което позволява създаване, редакция, споделяне и експортиране на презентации с поддръжка на работа в реално време." text="" style="[]"/>
+  </slide>
+
+  <slide title="Основни функционалности" slide_order="4" layout="full">
+    <slide_element element_order="0" type="list" title="" content="Управление на workspaces и достъпи&#10;CRUD операции за презентации и слайдове&#10;Export в PDF чрез микросервиз&#10;Real-time обновяване чрез WebSocket" text="" style="[]"/>
+  </slide>
+
+  <slide title="Комуникационни парадигми" slide_order="5" layout="full">
+    <slide_element element_order="0" type="list" title="" content="REST API (HTTP/JSON) – основна комуникация&#10;AJAX (Fetch API) – динамичен UI&#10;WebSocket – синхронизация в реално време&#10;REST между микросервизи (PHP ↔ Node.js)" text="" style="[]"/>
+  </slide>
+
+  <slide title="Архитектура – общ преглед" slide_order="6" layout="full">
+    <slide_element element_order="0" type="text" title="" content="Системата е изградена като разпределена архитектура с ясно разделени отговорности между клиент, основно приложение и микросервизи." text="" style="[]"/>
+  </slide>
+
+  <slide title="Архитектурна диаграма" slide_order="7" layout="full">
+    <slide_element element_order="0" type="image" title="Диаграма" content="/assets/img/architecture-diagram.svg" text="" style="[]"/>
+  </slide>
+
+  <slide title="Backend: PHP приложение" slide_order="8" layout="full">
+    <slide_element element_order="0" type="list" title="" content="MVC архитектура (Controllers / Models / Views)&#10;REST API под /api/*&#10;Session-based authentication&#10;Authorization по workspace и роли" text="" style="[]"/>
+  </slide>
+
+  <slide title="База данни" slide_order="9" layout="full">
+    <slide_element element_order="0" type="list" title="" content="MySQL база данни&#10;PDO с prepared statements&#10;Таблици: users, workspaces, presentations, slides&#10;Релационна цялост и ограничения" text="" style="[]"/>
+  </slide>
+
+  <slide title="Node.js PDF микросервиз" slide_order="10" layout="full">
+    <slide_element element_order="0" type="list" title="" content="Express.js REST service (порт 3001)&#10;Puppeteer (headless Chrome)&#10;HTML → PDF рендериране&#10;Изолиран от основното приложение" text="" style="[]"/>
+  </slide>
+
+  <slide title="WebSocket микросервиз" slide_order="11" layout="full">
+    <slide_element element_order="0" type="list" title="" content="Node.js WebSocket server (порт 3002)&#10;Room per presentation&#10;Broadcast на промени&#10;Health check endpoint (3003)" text="" style="[]"/>
+  </slide>
+
+  <slide title="REST API" slide_order="12" layout="full">
+    <slide_element element_order="0" type="list" title="" content="GET /api/workspaces&#10;GET /api/presentations&#10;POST /api/presentations&#10;POST /api/slides&#10;PUT /api/slides/{id}&#10;DELETE /api/slides/{id}" text="" style="[]"/>
+  </slide>
+
+  <slide title="Аутентикация и сигурност" slide_order="13" layout="full">
+    <slide_element element_order="0" type="list" title="" content="password_hash / password_verify&#10;Session-based auth (PHPSESSID)&#10;Authorization проверки във всеки controller&#10;XSS и SQL Injection защита" text="" style="[]"/>
+  </slide>
+
+  <slide title="Real-time работа" slide_order="14" layout="full">
+    <slide_element element_order="0" type="list" title="" content="Клиентите се свързват към WebSocket server&#10;Всеки presentation има собствен room&#10;Промените се излъчват към всички клиенти&#10;Автоматичен reconnect" text="" style="[]"/>
+  </slide>
+
+  <slide title="Резултати" slide_order="15" layout="full">
+    <slide_element element_order="0" type="list" title="" content="Работещо уеб приложение с реална употреба&#10;Успешна интеграция между PHP и Node.js&#10;Стабилна real-time синхронизация&#10;Коректен PDF експорт на презентации&#10;Ясно разделение на отговорностите" text="" style="[]"/>
+  </slide>
+
+  <slide title="Кратко демо" slide_order="16" layout="full">
+    <slide_element element_order="0" type="list" title="Сценарий" content="Login → Създаване на презентация&#10;Редакция в два браузъра&#10;Real-time update&#10;Export в PDF" text="" style="[]"/>
+  </slide>
+
+  <slide title="Заключение" slide_order="17" layout="full">
+    <slide_element element_order="0" type="text" title="" content="Проектът демонстрира практическо приложение на разпределени системи, REST, WebSocket и микросервизна архитектура в реален уеб проект." text="" style="[]"/>
+  </slide>
+
+  <slide title="Въпроси?" slide_order="18" layout="full">
+    <slide_element element_order="0" type="quote" title="" content="Благодаря за вниманието!" text="" style="[]" author="Презентационен генератор"/>
+    <slide_element element_order="1" type="text" title="" content="4MI0600173&#10;0MI0600254&#10;7MI0600259&#10;9MI0600147" text="" style="{&quot;fontSize&quot;:&quot;18px&quot;,&quot;textAlign&quot;:&quot;center&quot;,&quot;color&quot;:&quot;#b3b3b3&quot;}"/>
+  </slide>
+
+</presentation>

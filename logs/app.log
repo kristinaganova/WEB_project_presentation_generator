@@ -17259,3 +17259,643 @@ hg
 )
 
 [2025-06-11 16:54:23] App::__construct - Calling controller method with parameters
+[2026-01-18 17:55:02] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => presentation
+    [1] => exportPdfViaService
+    [2] => 142
+)
+
+[2026-01-18 17:55:02] App::parseUrl - Final URL segments: Array
+(
+    [0] => presentation
+    [1] => exportPdfViaService
+    [2] => 142
+)
+
+[2026-01-18 17:55:02] App::__construct - REQUEST_URI: /presentation/exportPdfViaService/142
+[2026-01-18 17:55:02] App::__construct - REQUEST_METHOD: GET
+[2026-01-18 17:55:02] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 17:55:02] App::__construct - PHP_SELF: /index.php/presentation/exportPdfViaService/142
+[2026-01-18 17:55:02] App::__construct - Selected controller: PresentationController
+[2026-01-18 17:55:02] App::__construct - Selected method: exportPdfViaService
+[2026-01-18 17:55:02] App::__construct - Parameters: Array
+(
+    [0] => 142
+)
+
+[2026-01-18 17:55:02] App::__construct - Calling controller method with parameters
+[2026-01-18 17:55:41] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => auth
+    [1] => login
+)
+
+[2026-01-18 17:55:41] App::parseUrl - Final URL segments: Array
+(
+    [0] => auth
+    [1] => login
+)
+
+[2026-01-18 17:55:41] App::__construct - REQUEST_URI: /auth/login
+[2026-01-18 17:55:41] App::__construct - REQUEST_METHOD: GET
+[2026-01-18 17:55:41] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 17:55:41] App::__construct - PHP_SELF: /index.php/auth/login
+[2026-01-18 17:55:41] App::__construct - Selected controller: AuthController
+[2026-01-18 17:55:41] App::__construct - Selected method: login
+[2026-01-18 17:55:41] App::__construct - Parameters: Array
+(
+)
+
+[2026-01-18 17:55:41] App::__construct - Calling controller method with parameters
+[2026-01-18 17:55:41] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => auth
+    [1] => login
+)
+
+[2026-01-18 17:55:41] App::parseUrl - Final URL segments: Array
+(
+    [0] => auth
+    [1] => login
+)
+
+[2026-01-18 17:55:41] App::__construct - REQUEST_URI: /auth/login
+[2026-01-18 17:55:41] App::__construct - REQUEST_METHOD: GET
+[2026-01-18 17:55:41] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 17:55:41] App::__construct - PHP_SELF: /index.php/auth/login
+[2026-01-18 17:55:41] App::__construct - Selected controller: AuthController
+[2026-01-18 17:55:41] App::__construct - Selected method: login
+[2026-01-18 17:55:41] App::__construct - Parameters: Array
+(
+)
+
+[2026-01-18 17:55:41] App::__construct - Calling controller method with parameters
+[2026-01-18 17:55:50] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => auth
+    [1] => login
+)
+
+[2026-01-18 17:55:50] App::parseUrl - Final URL segments: Array
+(
+    [0] => auth
+    [1] => login
+)
+
+[2026-01-18 17:55:50] App::__construct - REQUEST_URI: /auth/login
+[2026-01-18 17:55:50] App::__construct - REQUEST_METHOD: POST
+[2026-01-18 17:55:50] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 17:55:50] App::__construct - PHP_SELF: /index.php/auth/login
+[2026-01-18 17:55:50] App::__construct - Selected controller: AuthController
+[2026-01-18 17:55:50] App::__construct - Selected method: login
+[2026-01-18 17:55:50] App::__construct - Parameters: Array
+(
+)
+
+[2026-01-18 17:55:50] App::__construct - Calling controller method with parameters
+[2026-01-18 17:55:51] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => home
+    [1] => index
+)
+
+[2026-01-18 17:55:51] App::parseUrl - Final URL segments: Array
+(
+    [0] => home
+    [1] => index
+)
+
+[2026-01-18 17:55:51] App::__construct - REQUEST_URI: /home/index
+[2026-01-18 17:55:51] App::__construct - REQUEST_METHOD: GET
+[2026-01-18 17:55:51] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 17:55:51] App::__construct - PHP_SELF: /index.php/home/index
+[2026-01-18 17:55:51] App::__construct - Selected controller: HomeController
+[2026-01-18 17:55:51] App::__construct - Selected method: index
+[2026-01-18 17:55:51] App::__construct - Parameters: Array
+(
+)
+
+[2026-01-18 17:55:51] App::__construct - Calling controller method with parameters
+[2026-01-18 17:55:51] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => dashboard
+)
+
+[2026-01-18 17:55:51] App::parseUrl - Final URL segments: Array
+(
+    [0] => dashboard
+)
+
+[2026-01-18 17:55:51] App::__construct - REQUEST_URI: /dashboard
+[2026-01-18 17:55:51] App::__construct - REQUEST_METHOD: GET
+[2026-01-18 17:55:51] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 17:55:51] App::__construct - PHP_SELF: /index.php/dashboard
+[2026-01-18 17:55:51] App::__construct - Selected controller: DashboardController
+[2026-01-18 17:55:51] App::__construct - Parameters: Array
+(
+)
+
+[2026-01-18 17:55:51] App::__construct - Calling controller method with parameters
+[2026-01-18 17:55:52] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => dashboard
+    [1] => viewWorkspace
+    [2] => 35
+)
+
+[2026-01-18 17:55:52] App::parseUrl - Final URL segments: Array
+(
+    [0] => dashboard
+    [1] => viewWorkspace
+    [2] => 35
+)
+
+[2026-01-18 17:55:52] App::__construct - REQUEST_URI: /dashboard/viewWorkspace/35
+[2026-01-18 17:55:52] App::__construct - REQUEST_METHOD: GET
+[2026-01-18 17:55:52] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 17:55:52] App::__construct - PHP_SELF: /index.php/dashboard/viewWorkspace/35
+[2026-01-18 17:55:52] App::__construct - Selected controller: DashboardController
+[2026-01-18 17:55:52] App::__construct - Selected method: viewWorkspace
+[2026-01-18 17:55:52] App::__construct - Parameters: Array
+(
+    [0] => 35
+)
+
+[2026-01-18 17:55:52] App::__construct - Calling controller method with parameters
+[2026-01-18 17:55:55] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => presentation
+    [1] => viewPresentation
+    [2] => 142
+)
+
+[2026-01-18 17:55:55] App::parseUrl - Final URL segments: Array
+(
+    [0] => presentation
+    [1] => viewPresentation
+    [2] => 142
+)
+
+[2026-01-18 17:55:55] App::__construct - REQUEST_URI: /presentation/viewPresentation/142
+[2026-01-18 17:55:55] App::__construct - REQUEST_METHOD: GET
+[2026-01-18 17:55:55] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 17:55:55] App::__construct - PHP_SELF: /index.php/presentation/viewPresentation/142
+[2026-01-18 17:55:55] App::__construct - Selected controller: PresentationController
+[2026-01-18 17:55:55] App::__construct - Selected method: viewPresentation
+[2026-01-18 17:55:55] App::__construct - Parameters: Array
+(
+    [0] => 142
+)
+
+[2026-01-18 17:55:55] App::__construct - Calling controller method with parameters
+[2026-01-18 17:55:59] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => presentation
+    [1] => exportPdfViaService
+    [2] => 142
+)
+
+[2026-01-18 17:55:59] App::parseUrl - Final URL segments: Array
+(
+    [0] => presentation
+    [1] => exportPdfViaService
+    [2] => 142
+)
+
+[2026-01-18 17:55:59] App::__construct - REQUEST_URI: /presentation/exportPdfViaService/142
+[2026-01-18 17:55:59] App::__construct - REQUEST_METHOD: GET
+[2026-01-18 17:55:59] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 17:55:59] App::__construct - PHP_SELF: /index.php/presentation/exportPdfViaService/142
+[2026-01-18 17:55:59] App::__construct - Selected controller: PresentationController
+[2026-01-18 17:55:59] App::__construct - Selected method: exportPdfViaService
+[2026-01-18 17:55:59] App::__construct - Parameters: Array
+(
+    [0] => 142
+)
+
+[2026-01-18 17:55:59] App::__construct - Calling controller method with parameters
+[2026-01-18 17:57:15] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => presentation
+    [1] => exportPdfViaService
+    [2] => 142
+)
+
+[2026-01-18 17:57:15] App::parseUrl - Final URL segments: Array
+(
+    [0] => presentation
+    [1] => exportPdfViaService
+    [2] => 142
+)
+
+[2026-01-18 17:57:15] App::__construct - REQUEST_URI: /presentation/exportPdfViaService/142
+[2026-01-18 17:57:15] App::__construct - REQUEST_METHOD: GET
+[2026-01-18 17:57:15] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 17:57:15] App::__construct - PHP_SELF: /index.php/presentation/exportPdfViaService/142
+[2026-01-18 17:57:15] App::__construct - Selected controller: PresentationController
+[2026-01-18 17:57:15] App::__construct - Selected method: exportPdfViaService
+[2026-01-18 17:57:15] App::__construct - Parameters: Array
+(
+    [0] => 142
+)
+
+[2026-01-18 17:57:15] App::__construct - Calling controller method with parameters
+[2026-01-18 17:59:21] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => presentation
+    [1] => exportPdfViaService
+    [2] => 142
+)
+
+[2026-01-18 17:59:21] App::parseUrl - Final URL segments: Array
+(
+    [0] => presentation
+    [1] => exportPdfViaService
+    [2] => 142
+)
+
+[2026-01-18 17:59:21] App::__construct - REQUEST_URI: /presentation/exportPdfViaService/142
+[2026-01-18 17:59:21] App::__construct - REQUEST_METHOD: GET
+[2026-01-18 17:59:21] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 17:59:21] App::__construct - PHP_SELF: /index.php/presentation/exportPdfViaService/142
+[2026-01-18 17:59:21] App::__construct - Selected controller: PresentationController
+[2026-01-18 17:59:21] App::__construct - Selected method: exportPdfViaService
+[2026-01-18 17:59:21] App::__construct - Parameters: Array
+(
+    [0] => 142
+)
+
+[2026-01-18 17:59:21] App::__construct - Calling controller method with parameters
+[2026-01-18 18:01:50] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => presentation
+    [1] => exportPdfViaService
+    [2] => 142
+)
+
+[2026-01-18 18:01:50] App::parseUrl - Final URL segments: Array
+(
+    [0] => presentation
+    [1] => exportPdfViaService
+    [2] => 142
+)
+
+[2026-01-18 18:01:50] App::__construct - REQUEST_URI: /presentation/exportPdfViaService/142
+[2026-01-18 18:01:50] App::__construct - REQUEST_METHOD: GET
+[2026-01-18 18:01:50] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 18:01:50] App::__construct - PHP_SELF: /index.php/presentation/exportPdfViaService/142
+[2026-01-18 18:01:50] App::__construct - Selected controller: PresentationController
+[2026-01-18 18:01:50] App::__construct - Selected method: exportPdfViaService
+[2026-01-18 18:01:50] App::__construct - Parameters: Array
+(
+    [0] => 142
+)
+
+[2026-01-18 18:01:50] App::__construct - Calling controller method with parameters
+[2026-01-18 18:01:55] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => presentation
+    [1] => viewPresentation
+    [2] => 142
+)
+
+[2026-01-18 18:01:55] App::parseUrl - Final URL segments: Array
+(
+    [0] => presentation
+    [1] => viewPresentation
+    [2] => 142
+)
+
+[2026-01-18 18:01:55] App::__construct - REQUEST_URI: /presentation/viewPresentation/142
+[2026-01-18 18:01:55] App::__construct - REQUEST_METHOD: GET
+[2026-01-18 18:01:55] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 18:01:55] App::__construct - PHP_SELF: /index.php/presentation/viewPresentation/142
+[2026-01-18 18:01:55] App::__construct - Selected controller: PresentationController
+[2026-01-18 18:01:55] App::__construct - Selected method: viewPresentation
+[2026-01-18 18:01:55] App::__construct - Parameters: Array
+(
+    [0] => 142
+)
+
+[2026-01-18 18:01:55] App::__construct - Calling controller method with parameters
+[2026-01-18 18:01:57] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => presentation
+    [1] => exportPdfViaService
+    [2] => 142
+)
+
+[2026-01-18 18:01:57] App::parseUrl - Final URL segments: Array
+(
+    [0] => presentation
+    [1] => exportPdfViaService
+    [2] => 142
+)
+
+[2026-01-18 18:01:57] App::__construct - REQUEST_URI: /presentation/exportPdfViaService/142
+[2026-01-18 18:01:57] App::__construct - REQUEST_METHOD: GET
+[2026-01-18 18:01:57] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 18:01:57] App::__construct - PHP_SELF: /index.php/presentation/exportPdfViaService/142
+[2026-01-18 18:01:57] App::__construct - Selected controller: PresentationController
+[2026-01-18 18:01:57] App::__construct - Selected method: exportPdfViaService
+[2026-01-18 18:01:57] App::__construct - Parameters: Array
+(
+    [0] => 142
+)
+
+[2026-01-18 18:01:57] App::__construct - Calling controller method with parameters
+[2026-01-18 18:02:14] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => dashboard
+)
+
+[2026-01-18 18:02:14] App::parseUrl - Final URL segments: Array
+(
+    [0] => dashboard
+)
+
+[2026-01-18 18:02:14] App::__construct - REQUEST_URI: /dashboard
+[2026-01-18 18:02:14] App::__construct - REQUEST_METHOD: GET
+[2026-01-18 18:02:14] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 18:02:14] App::__construct - PHP_SELF: /index.php/dashboard
+[2026-01-18 18:02:14] App::__construct - Selected controller: DashboardController
+[2026-01-18 18:02:14] App::__construct - Parameters: Array
+(
+)
+
+[2026-01-18 18:02:14] App::__construct - Calling controller method with parameters
+[2026-01-18 18:02:15] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => dashboard
+    [1] => viewWorkspace
+    [2] => 35
+)
+
+[2026-01-18 18:02:15] App::parseUrl - Final URL segments: Array
+(
+    [0] => dashboard
+    [1] => viewWorkspace
+    [2] => 35
+)
+
+[2026-01-18 18:02:15] App::__construct - REQUEST_URI: /dashboard/viewWorkspace/35
+[2026-01-18 18:02:15] App::__construct - REQUEST_METHOD: GET
+[2026-01-18 18:02:15] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 18:02:15] App::__construct - PHP_SELF: /index.php/dashboard/viewWorkspace/35
+[2026-01-18 18:02:15] App::__construct - Selected controller: DashboardController
+[2026-01-18 18:02:15] App::__construct - Selected method: viewWorkspace
+[2026-01-18 18:02:15] App::__construct - Parameters: Array
+(
+    [0] => 35
+)
+
+[2026-01-18 18:02:15] App::__construct - Calling controller method with parameters
+[2026-01-18 18:02:17] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => presentation
+    [1] => viewPresentation
+    [2] => 141
+)
+
+[2026-01-18 18:02:17] App::parseUrl - Final URL segments: Array
+(
+    [0] => presentation
+    [1] => viewPresentation
+    [2] => 141
+)
+
+[2026-01-18 18:02:17] App::__construct - REQUEST_URI: /presentation/viewPresentation/141
+[2026-01-18 18:02:17] App::__construct - REQUEST_METHOD: GET
+[2026-01-18 18:02:17] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 18:02:17] App::__construct - PHP_SELF: /index.php/presentation/viewPresentation/141
+[2026-01-18 18:02:17] App::__construct - Selected controller: PresentationController
+[2026-01-18 18:02:17] App::__construct - Selected method: viewPresentation
+[2026-01-18 18:02:17] App::__construct - Parameters: Array
+(
+    [0] => 141
+)
+
+[2026-01-18 18:02:17] App::__construct - Calling controller method with parameters
+[2026-01-18 18:02:18] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => presentation
+    [1] => exportPdfViaService
+    [2] => 141
+)
+
+[2026-01-18 18:02:18] App::parseUrl - Final URL segments: Array
+(
+    [0] => presentation
+    [1] => exportPdfViaService
+    [2] => 141
+)
+
+[2026-01-18 18:02:18] App::__construct - REQUEST_URI: /presentation/exportPdfViaService/141
+[2026-01-18 18:02:18] App::__construct - REQUEST_METHOD: GET
+[2026-01-18 18:02:18] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 18:02:18] App::__construct - PHP_SELF: /index.php/presentation/exportPdfViaService/141
+[2026-01-18 18:02:18] App::__construct - Selected controller: PresentationController
+[2026-01-18 18:02:18] App::__construct - Selected method: exportPdfViaService
+[2026-01-18 18:02:18] App::__construct - Parameters: Array
+(
+    [0] => 141
+)
+
+[2026-01-18 18:02:18] App::__construct - Calling controller method with parameters
+[2026-01-18 18:02:56] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => presentation
+    [1] => export
+    [2] => 141
+    [3] => html
+)
+
+[2026-01-18 18:02:56] App::parseUrl - Final URL segments: Array
+(
+    [0] => presentation
+    [1] => export
+    [2] => 141
+    [3] => html
+)
+
+[2026-01-18 18:02:56] App::__construct - REQUEST_URI: /presentation/export/141/html
+[2026-01-18 18:02:56] App::__construct - REQUEST_METHOD: GET
+[2026-01-18 18:02:56] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 18:02:56] App::__construct - PHP_SELF: /index.php/presentation/export/141/html
+[2026-01-18 18:02:56] App::__construct - Selected controller: PresentationController
+[2026-01-18 18:02:56] App::__construct - Selected method: export
+[2026-01-18 18:02:56] App::__construct - Parameters: Array
+(
+    [0] => 141
+    [1] => html
+)
+
+[2026-01-18 18:02:56] App::__construct - Calling controller method with parameters
+[2026-01-18 20:24:53] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => auth
+    [1] => login
+)
+
+[2026-01-18 20:24:53] App::parseUrl - Final URL segments: Array
+(
+    [0] => auth
+    [1] => login
+)
+
+[2026-01-18 20:24:53] App::__construct - REQUEST_URI: /auth/login
+[2026-01-18 20:24:53] App::__construct - REQUEST_METHOD: GET
+[2026-01-18 20:24:53] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 20:24:53] App::__construct - PHP_SELF: /index.php/auth/login
+[2026-01-18 20:24:53] App::__construct - Selected controller: AuthController
+[2026-01-18 20:24:53] App::__construct - Selected method: login
+[2026-01-18 20:24:53] App::__construct - Parameters: Array
+(
+)
+
+[2026-01-18 20:24:53] App::__construct - Calling controller method with parameters
+[2026-01-18 20:25:02] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => auth
+    [1] => login
+)
+
+[2026-01-18 20:25:02] App::parseUrl - Final URL segments: Array
+(
+    [0] => auth
+    [1] => login
+)
+
+[2026-01-18 20:25:02] App::__construct - REQUEST_URI: /auth/login
+[2026-01-18 20:25:02] App::__construct - REQUEST_METHOD: POST
+[2026-01-18 20:25:02] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 20:25:02] App::__construct - PHP_SELF: /index.php/auth/login
+[2026-01-18 20:25:02] App::__construct - Selected controller: AuthController
+[2026-01-18 20:25:02] App::__construct - Selected method: login
+[2026-01-18 20:25:02] App::__construct - Parameters: Array
+(
+)
+
+[2026-01-18 20:25:02] App::__construct - Calling controller method with parameters
+[2026-01-18 20:25:03] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => home
+    [1] => index
+)
+
+[2026-01-18 20:25:03] App::parseUrl - Final URL segments: Array
+(
+    [0] => home
+    [1] => index
+)
+
+[2026-01-18 20:25:03] App::__construct - REQUEST_URI: /home/index
+[2026-01-18 20:25:03] App::__construct - REQUEST_METHOD: GET
+[2026-01-18 20:25:03] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 20:25:03] App::__construct - PHP_SELF: /index.php/home/index
+[2026-01-18 20:25:03] App::__construct - Selected controller: HomeController
+[2026-01-18 20:25:03] App::__construct - Selected method: index
+[2026-01-18 20:25:03] App::__construct - Parameters: Array
+(
+)
+
+[2026-01-18 20:25:03] App::__construct - Calling controller method with parameters
+[2026-01-18 20:25:03] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => dashboard
+)
+
+[2026-01-18 20:25:03] App::parseUrl - Final URL segments: Array
+(
+    [0] => dashboard
+)
+
+[2026-01-18 20:25:03] App::__construct - REQUEST_URI: /dashboard
+[2026-01-18 20:25:03] App::__construct - REQUEST_METHOD: GET
+[2026-01-18 20:25:03] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 20:25:03] App::__construct - PHP_SELF: /index.php/dashboard
+[2026-01-18 20:25:03] App::__construct - Selected controller: DashboardController
+[2026-01-18 20:25:03] App::__construct - Parameters: Array
+(
+)
+
+[2026-01-18 20:25:03] App::__construct - Calling controller method with parameters
+[2026-01-18 20:25:04] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => dashboard
+    [1] => viewWorkspace
+    [2] => 35
+)
+
+[2026-01-18 20:25:04] App::parseUrl - Final URL segments: Array
+(
+    [0] => dashboard
+    [1] => viewWorkspace
+    [2] => 35
+)
+
+[2026-01-18 20:25:04] App::__construct - REQUEST_URI: /dashboard/viewWorkspace/35
+[2026-01-18 20:25:04] App::__construct - REQUEST_METHOD: GET
+[2026-01-18 20:25:04] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 20:25:04] App::__construct - PHP_SELF: /index.php/dashboard/viewWorkspace/35
+[2026-01-18 20:25:04] App::__construct - Selected controller: DashboardController
+[2026-01-18 20:25:04] App::__construct - Selected method: viewWorkspace
+[2026-01-18 20:25:04] App::__construct - Parameters: Array
+(
+    [0] => 35
+)
+
+[2026-01-18 20:25:04] App::__construct - Calling controller method with parameters
+[2026-01-18 20:25:07] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => presentation
+    [1] => viewPresentation
+    [2] => 142
+)
+
+[2026-01-18 20:25:07] App::parseUrl - Final URL segments: Array
+(
+    [0] => presentation
+    [1] => viewPresentation
+    [2] => 142
+)
+
+[2026-01-18 20:25:07] App::__construct - REQUEST_URI: /presentation/viewPresentation/142
+[2026-01-18 20:25:07] App::__construct - REQUEST_METHOD: GET
+[2026-01-18 20:25:07] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 20:25:07] App::__construct - PHP_SELF: /index.php/presentation/viewPresentation/142
+[2026-01-18 20:25:07] App::__construct - Selected controller: PresentationController
+[2026-01-18 20:25:07] App::__construct - Selected method: viewPresentation
+[2026-01-18 20:25:07] App::__construct - Parameters: Array
+(
+    [0] => 142
+)
+
+[2026-01-18 20:25:07] App::__construct - Calling controller method with parameters
+[2026-01-18 20:25:08] App::parseUrl - Parsed URL from REQUEST_URI: Array
+(
+    [0] => presentation
+    [1] => exportPdfViaService
+    [2] => 142
+)
+
+[2026-01-18 20:25:08] App::parseUrl - Final URL segments: Array
+(
+    [0] => presentation
+    [1] => exportPdfViaService
+    [2] => 142
+)
+
+[2026-01-18 20:25:08] App::__construct - REQUEST_URI: /presentation/exportPdfViaService/142
+[2026-01-18 20:25:08] App::__construct - REQUEST_METHOD: GET
+[2026-01-18 20:25:08] App::__construct - SCRIPT_NAME: /index.php
+[2026-01-18 20:25:08] App::__construct - PHP_SELF: /index.php/presentation/exportPdfViaService/142
+[2026-01-18 20:25:08] App::__construct - Selected controller: PresentationController
+[2026-01-18 20:25:08] App::__construct - Selected method: exportPdfViaService
+[2026-01-18 20:25:08] App::__construct - Parameters: Array
+(
+    [0] => 142
+)
+
+[2026-01-18 20:25:08] App::__construct - Calling controller method with parameters

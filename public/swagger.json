@@ -10,8 +10,8 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8000",
-      "description": "Development server"
+      "url": "http://localhost/WEB_project_presentation_generator/public",
+      "description": "XAMPP Development Server"
     }
   ],
   "tags": [

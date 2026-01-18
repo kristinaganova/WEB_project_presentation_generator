@@ -6,6 +6,37 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit007a56ce5d77eeb623b8cae82ac92f7f
 {
+    public static $files = array (
+        'decc78cc4436b1292c6c0d151b19445c' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
+    );
+
+    public static $prefixLengthsPsr4 = array (
+        'p' =>
+        array (
+            'phpseclib3\\' => 11,
+        ),
+        'P' =>
+        array (
+            'PhpAmqpLib\\' => 11,
+            'ParagonIE\\ConstantTime\\' => 23,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'phpseclib3\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib',
+        ),
+        'PhpAmqpLib\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/php-amqplib/php-amqplib/PhpAmqpLib',
+        ),
+        'ParagonIE\\ConstantTime\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src',
+        ),
+    );
+
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Datamatrix' => __DIR__ . '/..' . '/tecnickcom/tcpdf/include/barcodes/datamatrix.php',
@@ -25,6 +56,8 @@ class ComposerStaticInit007a56ce5d77eeb623b8cae82ac92f7f
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->prefixLengthsPsr4 = ComposerStaticInit007a56ce5d77eeb623b8cae82ac92f7f::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit007a56ce5d77eeb623b8cae82ac92f7f::$prefixDirsPsr4;
             $loader->classMap = ComposerStaticInit007a56ce5d77eeb623b8cae82ac92f7f::$classMap;
 
         }, null, ClassLoader::class);

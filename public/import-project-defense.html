@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="bg">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Presentation Generator — защита</title>
+  </head>
+  <body>
+    <!-- IMPORTANT:
+         This file follows the app's HTML import format:
+         .presentation-view[data-theme] -> .slide -> .slide-content {layout} -> .element-container -> .content-element type-*
+    -->
+    <div class="presentation-view" data-theme="light">
+      <div class="slide">
+        <h2 class="slide-title">Какво е системата?</h2>
+        <div class="slide-content full">
+          <div class="element-container">
+            <h3 class="element-title">Описание</h3>
+            <div class="content-element type-text">
+              Уеб приложение за създаване и управление на презентации (workspaces → презентации → слайдове) с готови
+              шаблони, експорт и real-time collaboration.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide">
+        <h2 class="slide-title">Комуникационни парадигми</h2>
+        <div class="slide-content full">
+          <div class="element-container">
+            <div class="content-element type-list">
+              <ul>
+                <li>REST (HTTP/JSON) — външен достъп до ресурси</li>
+                <li>Микросервиз (PHP ↔ Node.js) — PDF генерация</li>
+                <li>WebSocket — синхронизация в реално време</li>
+                <li>AJAX (Fetch) — динамичен UI без презареждане</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide">
+        <h2 class="slide-title">Архитектура</h2>
+        <div class="slide-content full">
+          <div class="element-container">
+            <h3 class="element-title">Компоненти</h3>
+            <div class="content-element type-text">
+              PHP MVC (порт 8000) + MySQL + Node.js PDF service (3001) + Node.js WebSocket service (3002, health 3003).
+            </div>
+          </div>
+          <div class="element-container">
+            <h3 class="element-title">Диаграма</h3>
+            <div class="content-element type-image">
+              <div
+                class="image-container"
+                style="background-image: url('/assets/img/architecture-diagram.svg'); background-size: contain; background-position: center; background-repeat: no-repeat; height: 320px;"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide">
+        <h2 class="slide-title">Технологии: Backend (PHP)</h2>
+        <div class="slide-content full">
+          <div class="element-container">
+            <div class="content-element type-list">
+              <ul>
+                <li>PHP MVC (Controllers/Models/Views)</li>
+                <li>PDO + prepared statements</li>
+                <li>Sessions + Auth middleware</li>
+                <li>TCPDF (алтернативен PDF)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide">
+        <h2 class="slide-title">Технологии: Node.js услуги</h2>
+        <div class="slide-content full">
+          <div class="element-container">
+            <div class="content-element type-list">
+              <ul>
+                <li>Express (PDF service)</li>
+                <li>Puppeteer (headless Chrome)</li>
+                <li>ws (WebSocket server)</li>
+                <li>CORS + health endpoints</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide">
+        <h2 class="slide-title">Технологии: Frontend/Docs</h2>
+        <div class="slide-content full">
+          <div class="element-container">
+            <div class="content-element type-list">
+              <ul>
+                <li>HTML/CSS/JS + Fetch API</li>
+                <li>WebSocket client (auto reconnect)</li>
+                <li>Swagger UI + OpenAPI 3.0</li>
+                <li>Автоматизирани тестове</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide">
+        <h2 class="slide-title">REST API: Endpoints</h2>
+        <div class="slide-content full">
+          <div class="element-container">
+            <div class="content-element type-list">
+              <ul>
+                <li>GET /api/health</li>
+                <li>GET /api/workspaces</li>
+                <li>GET /api/presentations</li>
+                <li>GET /api/presentations/{id}</li>
+                <li>POST /api/presentations</li>
+                <li>POST /api/slides</li>
+                <li>PUT /api/slides/{id}</li>
+                <li>DELETE /api/slides/{id}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide">
+        <h2 class="slide-title">REST API: Аутентикация</h2>
+        <div class="slide-content full">
+          <div class="element-container">
+            <div class="content-element type-text">
+              UI е session-based (PHPSESSID cookie). За API се използва Bearer token със стойност PHPSESSID (след login).
+              Swagger: /api-docs.html
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide">
+        <h2 class="slide-title">PDF микросервиз: Идея</h2>
+        <div class="slide-content full">
+          <div class="element-container">
+            <div class="content-element type-text">
+              PHP генерира HTML за презентацията и го изпраща към Node.js услуга по REST. Услугата рендерира HTML с
+              headless Chrome и връща PDF.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide">
+        <h2 class="slide-title">PDF микросервиз: Endpoints</h2>
+        <div class="slide-content full">
+          <div class="element-container">
+            <div class="content-element type-list">
+              <ul>
+                <li>GET /health</li>
+                <li>POST /generate-pdf</li>
+                <li>POST /generate-pdf-batch</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide">
+        <h2 class="slide-title">WebSocket: Как работи</h2>
+        <div class="slide-content full">
+          <div class="element-container">
+            <div class="content-element type-list">
+              <ul>
+                <li>Room per presentation (по ID)</li>
+                <li>Broadcast към всички клиенти в room-а</li>
+                <li>HTTP endpoint /broadcast за нотификации от PHP</li>
+                <li>Client: auto-reconnect + status indicator</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide">
+        <h2 class="slide-title">WebSocket: Демо идея</h2>
+        <div class="slide-content full">
+          <div class="element-container">
+            <div class="content-element type-text">
+              Отвори една и съща презентация в 2 прозореца → редактирай слайд → виж update в реално време.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide">
+        <h2 class="slide-title">Security</h2>
+        <div class="slide-content full">
+          <div class="element-container">
+            <div class="content-element type-list">
+              <ul>
+                <li>password_hash()/password_verify()</li>
+                <li>Authorization по workspace + роли</li>
+                <li>PDO prepared statements (SQLi защита)</li>
+                <li>htmlspecialchars() във view-ове (XSS)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide">
+        <h2 class="slide-title">Quality</h2>
+        <div class="slide-content full">
+          <div class="element-container">
+            <div class="content-element type-list">
+              <ul>
+                <li>Error handling + логове</li>
+                <li>Health endpoints (8000/3001/3003)</li>
+                <li>Swagger “Try it out”</li>
+                <li>Тестове за PDF service + интеграция</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide">
+        <h2 class="slide-title">Кратко демо (5 мин.)</h2>
+        <div class="slide-content full">
+          <div class="element-container">
+            <h3 class="element-title">Стъпки</h3>
+            <div class="content-element type-list">
+              <ul>
+                <li>1) Login: /auth/login</li>
+                <li>2) Swagger: /api-docs.html → GET /api/presentations</li>
+                <li>3) Презентация → Export PDF (Node.js микросервиз)</li>
+                <li>4) WebSocket: 2 прозореца → редакция → real-time update</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide">
+        <h2 class="slide-title">Въпроси?</h2>
+        <div class="slide-content full">
+          <div class="element-container">
+            <div class="content-element type-quote">
+              <blockquote>
+                Благодаря за вниманието!
+                <cite>— Presentation Generator</cite>
+              </blockquote>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+

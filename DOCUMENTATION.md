@@ -29,7 +29,9 @@
 #### ✅ Микросервизна архитектура
 - Node.js микросервиз за PDF генериране (порт 3001)
 - Независим deployment и scaling
-- REST комуникация между PHP и Node.js
+- Комуникация между PHP и Node.js:
+  - REST (HTTP/JSON) – опционално
+  - RabbitMQ (AMQP RPC) – основен вариант за inter-service комуникация
 - Puppeteer за headless Chrome rendering
 
 #### ✅ WebSocket (Real-time комуникация)
@@ -372,6 +374,7 @@
 - **Express.js 4.18.2** - web framework
 - **Puppeteer 21.11.0** - headless Chrome automation
 - **CORS** - Cross-Origin Resource Sharing
+- **RabbitMQ (AMQP)** - inter-service communication (RPC)
 
 ### 4.3 Endpoints
 
@@ -418,12 +421,24 @@ Health check endpoint
 ```
 
 ### 4.4 PHP Integration
-Класът `PdfServiceClient.php` осигурява REST API клиент за комуникация с микросервиза:
+Класът `PdfServiceClient.php` поддържа 2 режима:
+- **HTTP (REST)**: `http://localhost:3001/generate-pdf`
+- **RabbitMQ (AMQP RPC)**: queue `pdf.generate` (request/response pattern)
 
 ```php
-$client = new PdfServiceClient('http://localhost:3001');
-$result = $client->generatePdf($html, $options);
+$client = new PdfServiceClient();
+$pdfBinary = $client->generatePdf($html, 'presentation', $options);
 ```
+
+### 4.5 RabbitMQ RPC (основен вариант)
+Конфигурация (в `config/config.php`):
+- `PDF_SERVICE_TYPE = rabbitmq`
+- `RABBITMQ_HOST/PORT/USER/PASS/VHOST`
+- `PDF_RPC_QUEUE = pdf.generate`
+
+Flow:
+- PHP публикува job в `pdf.generate` с `reply_to` + `correlation_id`
+- Node.js worker консумира, генерира PDF и връща отговор в reply queue
 
 ---
 
@@ -537,7 +552,7 @@ define('BASE_URL', 'http://localhost:8000');
 
 #### Стъпка 4: База данни
 ```bash
-mysql -u root -p < database/schema.sql
+mysql -u root -p presentation_generator < presentation_generator.sql
 ```
 
 #### Стъпка 5: Node.js Dependencies

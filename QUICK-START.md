@@ -1,24 +1,21 @@
-# 🚀 Quick Start: Testing Your REST API
+# 🚀 Quick Start: Run the App (PHP + DB + Services)
 
-## Step 1: Start Your Server
+## Step 1: Start PHP app (port 8000)
 
-**Option A: If you have XAMPP/WAMP already running**
-- Just go to Step 2, it's already working!
-
-**Option B: PHP Built-in Server**
-```powershell
-cd "c:\Uni\web\WEB_project_presentation_generator"
+```bash
+composer install
 php -S localhost:8000 -t public
 ```
+
+Open:
+- App: `http://localhost:8000`
+- Swagger UI: `http://localhost:8000/api-docs.html`
 
 ---
 
 ## Step 2: Test Health Endpoint (No Login Required)
 
-**Open your browser and go to:**
-```
-http://localhost/WEB_project_presentation_generator/public/api/health
-```
+Open: `http://localhost:8000/api/health`
 
 **You should see:**
 ```json
@@ -31,7 +28,7 @@ http://localhost/WEB_project_presentation_generator/public/api/health
 }
 ```
 
-✅ If you see this → **API IS WORKING!** 🎉
+✅ If you see this → **API IS WORKING!**
 
 ---
 
@@ -39,9 +36,7 @@ http://localhost/WEB_project_presentation_generator/public/api/health
 
 Before testing authenticated endpoints, you need to login:
 
-```
-http://localhost/WEB_project_presentation_generator/public/auth/login
-```
+`http://localhost:8000/auth/login`
 
 Login with your credentials.
 
@@ -49,10 +44,7 @@ Login with your credentials.
 
 ## Step 4: Use the Interactive Test Console
 
-**Open:**
-```
-http://localhost/WEB_project_presentation_generator/public/api-test.html
-```
+Open: `http://localhost:8000/api-test.html`
 
 **Now you can click buttons to test:**
 1. ✅ Health Check
@@ -124,7 +116,24 @@ http://localhost/WEB_project_presentation_generator/public/api/health
 
 **"Can't access api-test.html"**
 - Check file exists: `public/api-test.html`
-- Try full URL: `http://localhost/WEB_project_presentation_generator/public/api-test.html`
+- Try: `http://localhost:8000/api-test.html`
+
+---
+
+## PDF export (RabbitMQ)
+Ако `PDF_SERVICE_TYPE = rabbitmq`, за PDF export трябва:
+
+1) RabbitMQ (порт 5672) да работи
+```bash
+docker run -d --name presentation-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+```
+
+2) `pdf-service` да работи като worker (слуша queue `pdf.generate`)
+```bash
+cd pdf-service
+npm install
+npm start
+```
 
 ---
 

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="950" viewBox="0 0 1400 950">
+  <defs>
+    <style>
+      .bg { fill: #ffffff; }
+      .box { fill: #f7f9fc; stroke: #1f2937; stroke-width: 2; rx: 18; }
+      .box2 { fill: #eef2ff; stroke: #1f2937; stroke-width: 2; rx: 18; }
+      .box3 { fill: #ecfdf5; stroke: #1f2937; stroke-width: 2; rx: 18; }
+      .label { font-family: Inter, Arial, sans-serif; font-size: 26px; font-weight: 700; fill: #111827; }
+      .text { font-family: Inter, Arial, sans-serif; font-size: 18px; fill: #111827; }
+      .muted { fill: #374151; font-weight: 600; }
+      .small { font-family: Inter, Arial, sans-serif; font-size: 16px; fill: #374151; }
+      .proto { font-family: Inter, Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #111827; }
+      .tag { fill: #111827; opacity: 0.08; stroke: #111827; stroke-width: 1; rx: 10; }
+      .arrow { stroke: #111827; stroke-width: 2.5; fill: none; marker-end: url(#arrowHead); }
+      .arrow2 { stroke: #2563eb; stroke-width: 2.5; fill: none; marker-end: url(#arrowHeadBlue); }
+      .arrow4 { stroke: #f59e0b; stroke-width: 2.5; fill: none; marker-end: url(#arrowHeadAmber); }
+    </style>
+
+    <marker id="arrowHead" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#111827"/>
+    </marker>
+    <marker id="arrowHeadBlue" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrowHeadAmber" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#f59e0b"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1400" height="950"/>
+
+  <!-- Title -->
+  <text x="700" y="55" text-anchor="middle" class="label">??????????? ?? „?????????????? ?????????“</text>
+  <text x="700" y="82" text-anchor="middle" class="small">?????? ? PHP ?????????? ? MySQL + Node.js ???????????? (PDF ? WebSocket)</text>
+
+  <!-- Browser Client -->
+  <rect class="box" x="250" y="120" width="900" height="150" rx="18"/>
+  <text x="700" y="165" text-anchor="middle" class="label">Browser Client</text>
+  <text x="290" y="205" class="text">• UI (PHP templates)</text>
+  <text x="290" y="232" class="text">• AJAX (Fetch API)</text>
+  <text x="290" y="259" class="text">• WebSocket client</text>
+
+  <!-- PHP App -->
+  <rect class="box2" x="200" y="340" width="1000" height="210" rx="18"/>
+  <text x="700" y="385" text-anchor="middle" class="label">PHP Application (Port 8000)</text>
+  <text x="240" y="425" class="text">• MVC (Controllers / Models / Views)</text>
+  <text x="240" y="452" class="text">• REST API: /api/*</text>
+  <text x="240" y="479" class="text">• Auth (sessions) + Authorization (workspace access)</text>
+  <text x="240" y="506" class="text">• Export: HTML/XML/SLIM + PDF via microservice</text>
+
+  <!-- Tags between Browser and PHP -->
+  <rect class="tag" x="365" y="285" width="230" height="38" rx="12"/>
+  <text x="480" y="310" text-anchor="middle" class="proto">HTTP/HTML + REST (JSON)</text>
+
+  <rect class="tag" x="820" y="285" width="140" height="38" rx="12"/>
+  <text x="890" y="310" text-anchor="middle" class="proto">WebSocket</text>
+
+  <!-- Arrows Browser -> PHP -->
+  <path class="arrow2" d="M700 270 L700 340"/>
+  <path class="arrow4" d="M910 270 L910 340"/>
+
+  <!-- MySQL DB -->
+  <rect class="box" x="210" y="620" width="420" height="140" rx="18"/>
+  <text x="420" y="665" text-anchor="middle" class="label">MySQL DB</text>
+  <text x="420" y="697" text-anchor="middle" class="text muted">users / workspaces / presentations / slides</text>
+  <text x="420" y="727" text-anchor="middle" class="small">????? + ????? ?? ??????</text>
+
+  <!-- Node PDF Service -->
+  <rect class="box3" x="770" y="620" width="420" height="140" rx="18"/>
+  <text x="980" y="665" text-anchor="middle" class="label">Node.js PDF Service</text>
+  <text x="980" y="697" text-anchor="middle" class="text muted">(Port 3001, Puppeteer)</text>
+  <text x="980" y="727" text-anchor="middle" class="small">HTML ? PDF ???????????</text>
+
+  <!-- Node WebSocket Service -->
+  <rect class="box3" x="310" y="800" width="780" height="125" rx="18"/>
+  <text x="700" y="842" text-anchor="middle" class="label">Node.js WebSocket Service (Port 3002)</text>
+  <text x="350" y="878" class="text">• Rooms per presentation</text>
+  <text x="350" y="905" class="text">• Broadcast updates</text>
+  <text x="350" y="932" class="text">• Health check (Port 3003)</text>
+
+  <!-- Tags between PHP and MySQL / PDF -->
+  <rect class="tag" x="335" y="565" width="120" height="36" rx="12"/>
+  <text x="395" y="589" text-anchor="middle" class="proto">SQL (PDO)</text>
+
+  <rect class="tag" x="900" y="565" width="140" height="36" rx="12"/>
+  <text x="970" y="589" text-anchor="middle" class="proto">REST (JSON)</text>
+
+  <!-- Arrows PHP -> MySQL -->
+  <path class="arrow" d="M420 550 L420 620"/>
+  <!-- Arrows PHP -> PDF -->
+  <path class="arrow2" d="M980 550 L980 620"/>
+
+  <!-- Arrow PHP -> WebSocket Service (server-side notifications) -->
+  <rect class="tag" x="600" y="740" width="200" height="36" rx="12"/>
+  <text x="700" y="764" text-anchor="middle" class="proto">Broadcast / events</text>
+  <path class="arrow4" d="M700 550 L700 800"/>
+
+  <!-- Legend -->
+  <rect class="box" x="1120" y="815" width="250" height="110" rx="18"/>
+  <text x="1245" y="848" text-anchor="middle" class="text muted" style="font-weight:700">???????</text>
+  <line x1="1140" y1="872" x2="1180" y2="872" class="arrow"/>
+  <text x="1190" y="877" class="small">SQL / ????</text>
+  <line x1="1140" y1="897" x2="1180" y2="897" class="arrow2"/>
+  <text x="1190" y="902" class="small">REST/HTTP</text>
+  <line x1="1140" y1="922" x2="1180" y2="922" class="arrow4"/>
+  <text x="1190" y="927" class="small">WebSocket / events</text>
+</svg>
+

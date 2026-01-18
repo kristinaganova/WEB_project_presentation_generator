@@ -10,6 +10,12 @@ session_start();
 
 require_once __DIR__ . '/config.php';
 
+// Composer autoloader (required for external libraries like php-amqplib, tcpdf, etc.)
+$composerAutoload = __DIR__ . '/../vendor/autoload.php';
+if (file_exists($composerAutoload)) {
+    require_once $composerAutoload;
+}
+
 function logError($message) {
     error_log(date('[Y-m-d H:i:s] ') . $message . "\n", 3, __DIR__ . '/../logs/php_errors.log');
 }

@@ -4,31 +4,56 @@
  * PDF Service Client
  * 
  * Client for communicating with the Node.js PDF generation microservice.
- * Implements REST API communication between PHP and Node.js.
+ * Supports:
+ * - REST API communication (HTTP)
+ * - RabbitMQ RPC communication (AMQP)
  * 
  * Purpose: Demonstrates distributed system architecture
  * - PHP (main application platform)
  * - Node.js (PDF microservice platform)
- * - REST API (inter-service communication)
+ * - REST API / RabbitMQ (inter-service communication)
  * 
  * Points: 20 (Different platforms) + 15 (Multiple paradigms) = 35 points
  */
 class PdfServiceClient
 {
+    private $serviceType;
     private $serviceUrl;
     private $timeout;
     private $connectTimeout;
+
+    // RabbitMQ (RPC)
+    private $queueName;
+    private $timeoutSeconds;
+    private $connection;
+    private $channel;
+    private $callbackQueue;
+    private $response;
+    private $corrId;
     
     /**
      * Constructor
      * 
-     * @param string $serviceUrl URL of the PDF microservice (default: http://localhost:3001)
-     * @param int $timeout Request timeout in seconds (default: 30)
+     * Uses config constants when available:
+     * - PDF_SERVICE_TYPE: 'http' or 'rabbitmq'
+     * - PDF_SERVICE_HTTP_URL
+     * - PDF_SERVICE_TIMEOUT
+     * - PDF_RPC_QUEUE
+     * - PDF_RPC_TIMEOUT_SECONDS
      */
-    public function __construct($serviceUrl = 'http://localhost:3001', $timeout = 30) {
-        $this->serviceUrl = rtrim($serviceUrl, '/');
-        $this->timeout = $timeout;
+    public function __construct($serviceUrl = null, $timeout = null) {
+        $this->serviceType = defined('PDF_SERVICE_TYPE') ? PDF_SERVICE_TYPE : 'http';
+        $this->serviceUrl = rtrim($serviceUrl ?? (defined('PDF_SERVICE_HTTP_URL') ? PDF_SERVICE_HTTP_URL : 'http://localhost:3001'), '/');
+        $this->timeout = (int)($timeout ?? (defined('PDF_SERVICE_TIMEOUT') ? PDF_SERVICE_TIMEOUT : 30));
         $this->connectTimeout = 5;
+
+        $this->queueName = defined('PDF_RPC_QUEUE') ? PDF_RPC_QUEUE : 'pdf.generate';
+        $this->timeoutSeconds = defined('PDF_RPC_TIMEOUT_SECONDS') ? (int)PDF_RPC_TIMEOUT_SECONDS : 90;
+        $this->connection = null;
+        $this->channel = null;
+        $this->callbackQueue = null;
+        $this->response = null;
+        $this->corrId = null;
     }
     
     /**
@@ -52,8 +77,10 @@ class PdfServiceClient
             $payload['options'] = $options;
         }
         
-        // Make API request
-        $response = $this->makeRequest('POST', '/generate-pdf', $payload);
+        // Make request via configured transport
+        $response = $this->serviceType === 'rabbitmq'
+            ? $this->rpcRequest($payload)
+            : $this->makeRequest('POST', '/generate-pdf', $payload);
         
         // Validate response
         if (!isset($response['success']) || $response['success'] !== true) {
@@ -88,6 +115,7 @@ class PdfServiceClient
             'presentations' => $presentations
         ];
         
+        // Batch is supported only via HTTP in current implementation.
         $response = $this->makeRequest('POST', '/generate-pdf-batch', $payload);
         
         if (!isset($response['success']) || $response['success'] !== true) {
@@ -104,6 +132,12 @@ class PdfServiceClient
      */
     public function isAvailable() {
         try {
+            if ($this->serviceType === 'rabbitmq') {
+                $this->ensureConnected();
+                $this->channel->queue_declare($this->queueName, false, true, false, false);
+                return true;
+            }
+
             $response = $this->makeRequest('GET', '/health');
             return isset($response['status']) && $response['status'] === 'OK';
         } catch (Exception $e) {
@@ -118,7 +152,106 @@ class PdfServiceClient
      * @throws Exception If service is unavailable
      */
     public function getHealth() {
+        if ($this->serviceType === 'rabbitmq') {
+            $available = $this->isAvailable();
+            return [
+                'status' => $available ? 'OK' : 'DOWN',
+                'service' => 'PDF Generator via RabbitMQ',
+                'queue' => $this->queueName,
+                'timestamp' => date('c')
+            ];
+        }
+
         return $this->makeRequest('GET', '/health');
+    }
+
+    /**
+     * Ensure AMQP connection + channel exist
+     */
+    private function ensureConnected() {
+        if ($this->channel) return;
+
+        if (!class_exists('\\PhpAmqpLib\\Connection\\AMQPStreamConnection')) {
+            throw new Exception('php-amqplib/php-amqplib is not installed or autoload is missing. Run: composer install');
+        }
+
+        $host = defined('RABBITMQ_HOST') ? RABBITMQ_HOST : '127.0.0.1';
+        $port = defined('RABBITMQ_PORT') ? (int)RABBITMQ_PORT : 5672;
+        $user = defined('RABBITMQ_USER') ? RABBITMQ_USER : 'guest';
+        $pass = defined('RABBITMQ_PASS') ? RABBITMQ_PASS : 'guest';
+        $vhost = defined('RABBITMQ_VHOST') ? RABBITMQ_VHOST : '/';
+
+        $this->connection = new \PhpAmqpLib\Connection\AMQPStreamConnection($host, $port, $user, $pass, $vhost);
+        $this->channel = $this->connection->channel();
+
+        // Request queue must exist (durable so service restarts don't lose it)
+        $this->channel->queue_declare($this->queueName, false, true, false, false);
+
+        // Exclusive auto-delete callback queue for RPC responses
+        list($this->callbackQueue, ,) = $this->channel->queue_declare('', false, false, true, true);
+
+        $this->channel->basic_consume(
+            $this->callbackQueue,
+            '',
+            false,
+            true,
+            false,
+            false,
+            function ($msg) {
+                if ($this->corrId !== null && $msg->get('correlation_id') === $this->corrId) {
+                    $this->response = $msg->body;
+                }
+            }
+        );
+    }
+
+    /**
+     * RPC request over RabbitMQ
+     */
+    private function rpcRequest(array $payload, $queueNameOverride = null) {
+        $this->ensureConnected();
+
+        $queue = $queueNameOverride ?: $this->queueName;
+        $this->channel->queue_declare($queue, false, true, false, false);
+
+        $this->response = null;
+        $this->corrId = bin2hex(random_bytes(16));
+
+        $json = json_encode($payload);
+        if ($json === false) {
+            throw new Exception('Failed to encode PDF payload to JSON');
+        }
+
+        $msg = new \PhpAmqpLib\Message\AMQPMessage(
+            $json,
+            [
+                'content_type' => 'application/json',
+                'delivery_mode' => 2, // persistent
+                'correlation_id' => $this->corrId,
+                'reply_to' => $this->callbackQueue,
+            ]
+        );
+
+        $this->channel->basic_publish($msg, '', $queue);
+
+        $start = microtime(true);
+        while ($this->response === null) {
+            $elapsed = microtime(true) - $start;
+            $remaining = $this->timeoutSeconds - $elapsed;
+            if ($remaining <= 0) {
+                throw new Exception("PDF generation timed out after {$this->timeoutSeconds}s (RabbitMQ RPC)");
+            }
+
+            // Wait for a message on the callback queue
+            $this->channel->wait(null, false, (int)ceil($remaining));
+        }
+
+        $decoded = json_decode($this->response, true);
+        if (!is_array($decoded)) {
+            throw new Exception('Invalid JSON response from PDF service via RabbitMQ');
+        }
+
+        return $decoded;
     }
     
     /**
@@ -247,5 +380,14 @@ class PdfServiceClient
      */
     public function getServiceUrl() {
         return $this->serviceUrl;
+    }
+
+    public function __destruct() {
+        try {
+            if ($this->channel) $this->channel->close();
+            if ($this->connection) $this->connection->close();
+        } catch (\Throwable $e) {
+            // ignore shutdown errors
+        }
     }
 }

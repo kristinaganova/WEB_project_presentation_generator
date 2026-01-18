@@ -6,11 +6,36 @@ require_once __DIR__ . '/../../helpers/SlideRenderer.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/main.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/presentation.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>/assets/css/slides.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Load Bootstrap JS in head with defer -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script>
+        // Debug dropdown
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded');
+            console.log('Bootstrap available:', typeof bootstrap);
+            
+            const btn = document.getElementById('exportDropdown');
+            const menu = document.querySelector('.dropdown-menu');
+            
+            if (btn) {
+                btn.addEventListener('click', function(e) {
+                    console.log('Button clicked!');
+                    console.log('Event:', e);
+                    console.log('Bootstrap:', typeof bootstrap);
+                    console.log('Menu classes before:', menu.className);
+                    
+                    // Manually toggle
+                    menu.classList.toggle('show');
+                    console.log('Menu classes after toggle:', menu.className);
+                });
+            }
+        });
+    </script>
     <title>Преглед на презентация</title>
 </head>
 <body>
@@ -279,7 +304,6 @@ require_once __DIR__ . '/../../helpers/SlideRenderer.php';
             });
         }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- WebSocket Real-time Collaboration -->
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/websocket.css">
@@ -344,4 +368,4 @@ require_once __DIR__ . '/../../helpers/SlideRenderer.php';
         }
     </script>
 </body>
-</html> 
+</html>
